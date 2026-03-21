@@ -1,0 +1,219 @@
+{
+  "id": "single_gates",
+  "title": "Single Qubit Gates",
+  "level": "beginner",
+
+  "theory": {
+    "introduction": "Quantum gates are operations that change the state of a qubit. Just like classical logic gates (AND, NOT) manipulate bits, quantum gates manipulate qubits. However, unlike classical gates, quantum gates are reversible and operate using linear algebra.",
+
+    "start_from_zero": "Think of a qubit as a point representing probabilities. Quantum gates are like transformations that move this point around. Instead of flipping between 0 and 1 directly, gates rotate or transform the state in a continuous way.",
+
+    "why_it_matters": "Quantum gates are the building blocks of quantum circuits. By combining them, we can create complex behaviors like superposition, interference, and entanglement — which are essential for quantum algorithms.",
+
+    "core_idea": "A quantum gate is a mathematical operation represented by a matrix. When applied, it multiplies with the qubit state vector and produces a new quantum state.",
+
+    "step_by_step_understanding": [
+      "Step 1: Start with a qubit (usually |0⟩)",
+      "Step 2: Represent it as a vector",
+      "Step 3: Apply a gate (matrix multiplication)",
+      "Step 4: The state changes (new amplitudes)",
+      "Step 5: Measure to get a classical result"
+    ],
+
+    "key_points": [
+      "Quantum gates operate using matrix multiplication",
+      "All quantum gates are reversible (unitary)",
+      "They preserve total probability (normalization)",
+      "Some gates affect probability, others affect phase",
+      "Gates can be visualized as rotations on the Bloch sphere"
+    ],
+
+    "bloch_sphere_connection": {
+      "description": "Quantum gates can be understood as rotations of a qubit on the Bloch Sphere.",
+      "examples": [
+        "X gate rotates the qubit around the X-axis",
+        "Y gate rotates around the Y-axis",
+        "Z gate rotates around the Z-axis",
+        "Hadamard moves the qubit from pole to equator"
+      ],
+      "importance": "This visualization helps understand how gates transform quantum states continuously."
+    },
+
+    "gates": [
+      {
+        "name": "Pauli-X Gate (NOT Gate)",
+        "symbol": "X",
+        "description": "Flips the qubit state, similar to a classical NOT gate.",
+        "math": "X = [[0,1],[1,0]]",
+        "transformation": "|0⟩ → |1⟩, |1⟩ → |0⟩",
+        "intuition": "Like flipping a coin from heads to tails.",
+        "bloch_effect": "Rotates the qubit 180° around the X-axis",
+        "example": "|ψ⟩ = |0⟩ → X → |1⟩",
+        "deep_note": "Unlike classical NOT, this works even on superpositions.",
+        "simulation": {
+          "initial_state": "|0⟩",
+          "operations": [{ "gate": "X", "target": 0 }],
+          "expected_result": "|1⟩"
+        }
+      },
+
+      {
+        "name": "Pauli-Z Gate",
+        "symbol": "Z",
+        "description": "Changes the phase of the |1⟩ component but leaves |0⟩ unchanged.",
+        "math": "Z = [[1,0],[0,-1]]",
+        "transformation": "|0⟩ → |0⟩, |1⟩ → -|1⟩",
+        "intuition": "It changes the 'sign' of the state without affecting probabilities.",
+        "bloch_effect": "Rotates the qubit 180° around the Z-axis",
+        "example": "(|0⟩ + |1⟩)/√2 → Z → (|0⟩ - |1⟩)/√2",
+        "deep_note": "Phase changes are invisible in measurement but crucial in interference.",
+        "simulation": {
+          "initial_state": "(|0⟩ + |1⟩)/√2",
+          "operations": [{ "gate": "Z", "target": 0 }],
+          "expected_result": "(|0⟩ - |1⟩)/√2"
+        }
+      },
+
+      {
+        "name": "Pauli-Y Gate",
+        "symbol": "Y",
+        "description": "Applies both bit flip and phase change together.",
+        "math": "Y = [[0,-i],[i,0]]",
+        "transformation": "|0⟩ → i|1⟩, |1⟩ → -i|0⟩",
+        "intuition": "A combination of X and Z effects with a complex phase.",
+        "bloch_effect": "Rotates the qubit 180° around the Y-axis",
+        "example": "|ψ⟩ = |0⟩ → Y → i|1⟩",
+        "deep_note": "Introduces complex phase (i), which is important in quantum interference.",
+        "simulation": {
+          "initial_state": "|0⟩",
+          "operations": [{ "gate": "Y", "target": 0 }],
+          "expected_result": "i|1⟩"
+        }
+      },
+
+      {
+        "name": "Hadamard Gate",
+        "symbol": "H",
+        "description": "Creates superposition by transforming basis states into equal combinations.",
+        "math": "H = (1/√2)[[1,1],[1,-1]]",
+        "transformation": "|0⟩ → (|0⟩ + |1⟩)/√2",
+        "intuition": "Splits the qubit into equal possibilities.",
+        "bloch_effect": "Moves the qubit from pole to equator",
+        "example": "|ψ⟩ = |0⟩ → H → (|0⟩ + |1⟩)/√2",
+        "deep_note": "This gate is essential for creating quantum parallelism.",
+        "simulation": {
+          "initial_state": "|0⟩",
+          "operations": [{ "gate": "H", "target": 0 }],
+          "expected_result": "(|0⟩ + |1⟩)/√2"
+        }
+      }
+    ]
+  },
+
+  "comparisons": [
+    {
+      "gate": "X",
+      "effect": "Bit flip",
+      "changes_probability": true,
+      "changes_phase": false,
+      "bloch_motion": "Flip across X-axis"
+    },
+    {
+      "gate": "Z",
+      "effect": "Phase flip",
+      "changes_probability": false,
+      "changes_phase": true,
+      "bloch_motion": "Rotation around Z-axis"
+    },
+    {
+      "gate": "Y",
+      "effect": "Bit + phase flip",
+      "changes_probability": true,
+      "changes_phase": true,
+      "bloch_motion": "Rotation around Y-axis"
+    },
+    {
+      "gate": "H",
+      "effect": "Creates superposition",
+      "changes_probability": true,
+      "changes_phase": true,
+      "bloch_motion": "Pole to equator rotation"
+    }
+  ],
+
+  "examples": [
+    {
+      "title": "H followed by X",
+      "description": "Apply H then X on |0⟩",
+      "steps": [
+        "|0⟩ → H → (|0⟩ + |1⟩)/√2",
+        "(|0⟩ + |1⟩)/√2 → X → (|1⟩ + |0⟩)/√2"
+      ],
+      "result": "(|0⟩ + |1⟩)/√2",
+      "insight": "Order of gates matters, but here the state remains symmetric."
+    },
+    {
+      "title": "H followed by Z",
+      "description": "Apply H then Z",
+      "steps": [
+        "|0⟩ → H → (|0⟩ + |1⟩)/√2",
+        "→ Z → (|0⟩ - |1⟩)/√2"
+      ],
+      "insight": "Probabilities stay same, but phase changes."
+    }
+  ],
+
+  "common_mistakes": [
+    "Thinking Z gate changes measurement outcome",
+    "Ignoring phase differences (very important)",
+    "Assuming quantum gates behave like classical logic gates",
+    "Forgetting that order of gates matters",
+    "Not understanding that gates act on amplitudes, not probabilities directly"
+  ],
+
+  "simulation": {
+    "initial_state": "|0⟩",
+    "operations": [
+      { "gate": "H", "target": 0 },
+      { "gate": "X", "target": 0 }
+    ],
+    "expected_result": "(|0⟩ + |1⟩)/√2",
+    "try_this": [
+      "Apply H then measure multiple times",
+      "Apply Z after H and observe phase change",
+      "Try X before H and compare results"
+    ]
+  },
+
+  "quiz": [
+    {
+      "question": "Which gate flips a qubit?",
+      "options": ["Z", "X", "H", "Y"],
+      "answer": "X",
+      "explanation": "X gate flips |0⟩ to |1⟩ and vice versa."
+    },
+    {
+      "question": "Which gate changes phase only?",
+      "options": ["X", "Z", "H", "Y"],
+      "answer": "Z",
+      "explanation": "Z gate changes phase without affecting probability."
+    },
+    {
+      "question": "What does the Hadamard gate do?",
+      "options": [
+        "Measures qubit",
+        "Creates superposition",
+        "Flips qubit",
+        "Deletes state"
+      ],
+      "answer": "Creates superposition",
+      "explanation": "H creates equal probability states."
+    },
+    {
+      "question": "Do quantum gates lose information?",
+      "options": ["Yes", "No"],
+      "answer": "No",
+      "explanation": "Quantum gates are reversible (unitary)."
+    }
+  ]
+}

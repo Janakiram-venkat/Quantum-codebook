@@ -1,0 +1,241 @@
+{
+  "id": "measurement",
+  "title": "Quantum Measurement",
+  "level": "beginner",
+
+  "theory": {
+    "introduction": "Measurement is the process of extracting classical information from a quantum system. When we measure a qubit, it stops behaving like a quantum object and gives a definite classical result (0 or 1).",
+
+    "start_from_zero": "Before measurement, a qubit exists in a superposition of states. This means it does not have a definite value. Measurement forces the qubit to 'choose' one outcome based on probabilities.",
+
+    "why_it_matters": "Measurement is how we get useful results from quantum computers. All quantum computations eventually end with measurement, which converts quantum information into classical data we can read.",
+
+    "core_idea": "A qubit stores probabilities in its amplitudes. Measurement converts those probabilities into a single definite outcome.",
+
+    "key_points": [
+      "Measurement gives a definite classical outcome (0 or 1)",
+      "Probabilities are determined by amplitudes",
+      "The quantum state collapses after measurement",
+      "Measurement is irreversible",
+      "Measurement depends on the chosen basis",
+      "Measurement does not reveal amplitudes directly, only outcomes"
+    ],
+
+    "step_by_step_understanding": [
+      "Step 1: Prepare a qubit (e.g., apply H)",
+      "Step 2: The qubit is in superposition",
+      "Step 3: Measurement is applied",
+      "Step 4: A random outcome is produced based on probabilities",
+      "Step 5: The qubit collapses to that outcome"
+    ],
+
+    "math": {
+      "state": "|ψ⟩ = α|0⟩ + β|1⟩",
+      "probability": "P(0) = |α|², P(1) = |β|²",
+      "explanation": "The square of the amplitude gives the probability of measuring that state."
+    },
+
+    "intuition": {
+      "coin": "Like stopping a spinning coin — you force the system to choose heads or tails.",
+      "lottery": "You can think of amplitudes as 'weights' in a lottery. Measurement picks one outcome based on those weights.",
+      "not_random_guess": "The result may look random, but it follows precise probability rules."
+    },
+
+    "sections": [
+      {
+        "title": "Measurement in Computational Basis",
+        "content": [
+          "Standard measurement is done in the |0⟩, |1⟩ basis",
+          "If |ψ⟩ = α|0⟩ + β|1⟩:",
+          "Probability of 0 = |α|²",
+          "Probability of 1 = |β|²"
+        ],
+        "examples": [
+          "|ψ⟩ = (1/√2)(|0⟩ + |1⟩)",
+          "P(0) = 1/2, P(1) = 1/2"
+        ]
+      },
+
+      {
+        "title": "State Collapse",
+        "content": [
+          "After measurement, the qubit collapses to the observed state",
+          "If result is 0 → state becomes |0⟩",
+          "If result is 1 → state becomes |1⟩",
+          "The original superposition is destroyed"
+        ],
+        "important_note": "Collapse is not gradual — it happens instantly when measurement occurs."
+      },
+
+      {
+        "title": "Measurement is Probabilistic, Not Arbitrary",
+        "content": [
+          "Measurement outcomes appear random",
+          "But probabilities are strictly determined by amplitudes",
+          "Running the same circuit many times reveals the probability distribution"
+        ]
+      },
+
+      {
+        "title": "Measurement Operators (Intro)",
+        "content": [
+          "Measurement can be described using operators",
+          "Projector for |0⟩: P₀ = |0⟩⟨0|",
+          "Projector for |1⟩: P₁ = |1⟩⟨1|",
+          "Probability = ⟨ψ|P|ψ⟩"
+        ]
+      },
+
+      {
+        "title": "Measurement in Different Bases",
+        "content": [
+          "Measurement depends on the basis you choose",
+          "Default is computational basis (Z-basis)",
+          "We can change basis using gates",
+          "|+⟩ = (|0⟩ + |1⟩)/√2",
+          "|−⟩ = (|0⟩ − |1⟩)/√2"
+        ],
+        "examples": [
+          "Apply H before measurement → changes basis",
+          "H + Measure = measurement in X-basis"
+        ],
+        "intuition": "Changing basis is like rotating the coordinate system before measuring."
+      },
+
+      {
+        "title": "Bloch Sphere Interpretation",
+        "content": [
+          "Measurement corresponds to projecting the qubit onto an axis",
+          "Z-basis measurement → projection onto vertical axis",
+          "X-basis measurement → projection onto horizontal axis",
+          "The closer the state is to a pole, the higher the probability of that outcome"
+        ]
+      },
+
+      {
+        "title": "Irreversibility",
+        "content": [
+          "Measurement destroys quantum information",
+          "You cannot recover the original superposition",
+          "This is why quantum algorithms delay measurement until the end"
+        ]
+      },
+
+      {
+        "title": "Multiple Measurements",
+        "content": [
+          "Measuring the same qubit again gives the same result",
+          "Because the state is already collapsed",
+          "Repeated measurements do not change the outcome"
+        ]
+      },
+
+      {
+        "title": "Important Subtle Point (Phase)",
+        "content": [
+          "Measurement depends only on |α|² and |β|²",
+          "Global phase does not affect measurement",
+          "Relative phase affects interference in circuits, not direct measurement"
+        ]
+      }
+    ]
+  },
+
+  "examples": [
+    {
+      "title": "Measure Superposition",
+      "description": "Apply Hadamard and measure the qubit.",
+      "circuit": [
+        { "gate": "H", "target": 0 },
+        { "gate": "MEASURE", "target": 0 }
+      ],
+      "result": "0 or 1 with equal probability"
+    },
+    {
+      "title": "Repeated Measurement",
+      "description": "Measure a qubit twice.",
+      "circuit": [
+        { "gate": "H", "target": 0 },
+        { "gate": "MEASURE", "target": 0 },
+        { "gate": "MEASURE", "target": 0 }
+      ],
+      "result": "Second measurement gives same result as first"
+    },
+    {
+      "title": "Measurement in X-Basis",
+      "description": "Apply H before measurement to change basis.",
+      "circuit": [
+        { "gate": "H", "target": 0 },
+        { "gate": "MEASURE", "target": 0 }
+      ],
+      "note": "Equivalent to measuring in |+⟩, |−⟩ basis"
+    },
+    {
+      "title": "Biased Measurement",
+      "description": "Qubit with unequal amplitudes.",
+      "state": "|ψ⟩ = √0.8|0⟩ + √0.2|1⟩",
+      "result": "More likely to measure 0 than 1"
+    }
+  ],
+
+  "common_mistakes": [
+    "Thinking measurement reveals the full quantum state",
+    "Confusing randomness with lack of rules",
+    "Ignoring the role of basis in measurement",
+    "Assuming phase affects direct measurement outcome",
+    "Thinking measurement can be undone"
+  ],
+
+  "simulation": {
+    "initial_state": "|0⟩",
+    "operations": [
+      { "gate": "H", "target": 0 },
+      { "gate": "MEASURE", "target": 0 }
+    ],
+    "expected_result": "0 or 1 with 50% probability each",
+    "try_this": [
+      "Run the circuit multiple times and observe distribution",
+      "Apply Z before measurement and compare results",
+      "Apply H twice and observe deterministic outcome"
+    ]
+  },
+
+  "quiz": [
+    {
+      "question": "What does measurement do to a quantum state?",
+      "options": [
+        "Enhances it",
+        "Collapses it",
+        "Copies it",
+        "Deletes it"
+      ],
+      "answer": "Collapses it"
+    },
+    {
+      "question": "What determines measurement probability?",
+      "options": [
+        "Gate type",
+        "Amplitude squared",
+        "Number of qubits",
+        "Circuit depth"
+      ],
+      "answer": "Amplitude squared"
+    },
+    {
+      "question": "What happens if you measure twice?",
+      "options": [
+        "Different results",
+        "Same result",
+        "Random error",
+        "System resets"
+      ],
+      "answer": "Same result"
+    },
+    {
+      "question": "Does phase affect direct measurement outcome?",
+      "options": ["Yes", "No"],
+      "answer": "No",
+      "explanation": "Only amplitude magnitudes affect measurement probabilities."
+    }
+  ]
+}

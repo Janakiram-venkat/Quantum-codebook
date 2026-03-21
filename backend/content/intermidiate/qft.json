@@ -1,0 +1,184 @@
+{
+  "id": "quantum_fourier_transform",
+  "title": "Quantum Fourier Transform (QFT)",
+  "level": "intermediate",
+
+  "theory": {
+    "introduction": "Quantum Fourier Transform (QFT) is the quantum analogue of the classical discrete Fourier transform. It transforms a quantum state into a phase-based representation, enabling efficient solutions to problems involving periodicity, frequency estimation, and hidden structure in data.",
+
+    "key_points": [
+      "QFT transforms amplitudes into phase information",
+      "QFT operates on quantum superposition states",
+      "It is exponentially faster than classical Fourier Transform for certain problems",
+      "QFT is a core component of Phase Estimation and Shor's Algorithm",
+      "QFT can be efficiently implemented using Hadamard and controlled phase gates"
+    ],
+
+    "mathematical_representation": {
+      "definition": "For an n-qubit system, QFT transforms basis state |x⟩ as:",
+
+      "formula": "QFT|x⟩ = (1/√N) Σ exp(2πi xk / N) |k⟩",
+
+      "dimension": "For n qubits, N = 2^n",
+
+      "phase_encoding": "Amplitude information is encoded into relative phase differences between basis states"
+    },
+
+    "intuition": {
+      "description": "QFT extracts periodic structure from quantum states. Instead of analyzing signals directly, QFT encodes frequency information into quantum phases.",
+      
+      "comparison_classical": {
+        "classical_fft": "Requires O(N log N) operations",
+        "quantum_qft": "Requires O((log N)^2) gate operations"
+      }
+    }
+  },
+
+  "circuit_structure": {
+    "description": "QFT is implemented using a sequence of Hadamard gates and controlled phase rotations.",
+
+    "building_blocks": [
+      "Hadamard gate creates superposition",
+      "Controlled phase gates introduce relative phase shifts",
+      "Swap gates reverse qubit order"
+    ],
+
+    "rotation_gates": {
+      "R2": "Phase rotation of π/2",
+      "R3": "Phase rotation of π/4",
+      "Rk": "Phase rotation of π / 2^(k-1)"
+    }
+  },
+
+  "step_by_step": [
+    {
+      "step": 1,
+      "description": "Apply Hadamard gate to first qubit"
+    },
+    {
+      "step": 2,
+      "description": "Apply controlled phase rotations with increasing precision"
+    },
+    {
+      "step": 3,
+      "description": "Repeat process for remaining qubits"
+    },
+    {
+      "step": 4,
+      "description": "Reverse qubit order using swap gates"
+    }
+  ],
+
+  "circuit_examples": [
+    {
+      "name": "2-Qubit QFT",
+      "description": "Basic QFT circuit for 2 qubits",
+
+      "circuit": [
+        { "gate": "H", "target": 0 },
+
+        { "gate": "CPHASE", "control": 1, "target": 0, "angle": "π/2" },
+
+        { "gate": "H", "target": 1 },
+
+        { "gate": "SWAP", "targets": [0, 1] }
+      ]
+    },
+
+    {
+      "name": "3-Qubit QFT Structure",
+      "description": "Illustrates layered phase rotations",
+
+      "circuit_pattern": [
+        "H on qubit 0",
+        "Controlled R2 from qubit 1",
+        "Controlled R3 from qubit 2",
+        "H on qubit 1",
+        "Controlled R2 from qubit 2",
+        "H on qubit 2",
+        "Swap qubit order"
+      ]
+    }
+  ],
+
+  "visualization": {
+    "phase_representation": "QFT converts amplitude differences into phase differences between basis states.",
+    
+    "bloch_note": "Bloch sphere visualization becomes insufficient for more than one qubit, but phase relationships can still be observed through simulator probability distributions."
+  },
+
+  "complexity": {
+    "classical": "O(N log N)",
+    "quantum": "O((log N)^2)"
+  },
+
+  "applications": [
+    "Phase Estimation Algorithm",
+    "Shor's Factoring Algorithm",
+    "Quantum simulation",
+    "Period finding problems",
+    "Signal processing",
+    "Quantum chemistry"
+  ],
+
+  "summary": "Quantum Fourier Transform efficiently converts quantum states into phase space representation. It enables exponential speedups in algorithms involving periodicity and eigenvalue estimation.",
+
+  "difficulty": "medium",
+
+  "estimated_time": "25-35 minutes",
+
+  "prerequisites": [
+    "Superposition",
+    "Phase Gates",
+    "Multi-Qubit Systems",
+    "Controlled Gates"
+  ],
+
+  "simulation": {
+    "initial_state": "|00⟩",
+    "operations": [
+      { "gate": "H", "target": 0 },
+      { "gate": "CNOT", "control": 1, "target": 0 },
+      { "gate": "H", "target": 1 }
+    ],
+    "expected_result": "QFT-transformed superposition state",
+    "try_this": [
+      "Observe how the Hadamard gates create superposition in both qubits",
+      "The CNOT introduces the phase relationship required for QFT",
+      "Compare amplitudes to see the phase encoding in action"
+    ]
+  },
+
+  "quiz": [
+    {
+      "question": "What is the classical complexity of the Fast Fourier Transform on N points?",
+      "options": ["O(N)", "O(N log N)", "O(N²)", "O(log N)"],
+      "answer": "O(N log N)",
+      "explanation": "The classical FFT requires O(N log N) operations."
+    },
+    {
+      "question": "What is the quantum complexity of the Quantum Fourier Transform?",
+      "options": ["O(N)", "O(N log N)", "O((log N)²)", "O(√N)"],
+      "answer": "O((log N)²)",
+      "explanation": "QFT requires only O((log N)^2) gate operations, an exponential improvement over classical FFT."
+    },
+    {
+      "question": "Which gate is the primary building block of QFT?",
+      "options": ["X gate", "Hadamard gate", "CNOT gate", "Z gate"],
+      "answer": "Hadamard gate",
+      "explanation": "The Hadamard gate combined with controlled phase rotations forms the core of the QFT circuit."
+    },
+    {
+      "question": "What does QFT encode amplitude information into?",
+      "options": ["Measurement probabilities", "Relative phases between states", "Qubit counts", "Gate counts"],
+      "answer": "Relative phases between states",
+      "explanation": "QFT transforms amplitude information into phase differences between basis states."
+    },
+    {
+      "question": "Which major algorithm uses QFT as a subroutine?",
+      "options": ["Grover's algorithm", "Shor's factoring algorithm", "VQE", "Quantum teleportation"],
+      "answer": "Shor's factoring algorithm",
+      "explanation": "Shor's algorithm uses QFT for period finding, which enables integer factorization."
+    }
+  ]
+}

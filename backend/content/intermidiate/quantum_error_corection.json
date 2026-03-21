@@ -1,0 +1,192 @@
+{
+  "id": "quantum_error_correction",
+  "title": "Quantum Error Correction",
+  "level": "intermediate",
+
+  "theory": {
+    "introduction": "Quantum Error Correction (QEC) protects quantum information from noise and decoherence. Unlike classical error correction, QEC must preserve superposition and entanglement while detecting and correcting errors without directly measuring the quantum state.",
+
+    "key_points": [
+      "Quantum information is highly sensitive to noise",
+      "Direct measurement destroys quantum state",
+      "QEC encodes logical qubit into multiple physical qubits",
+      "Syndrome measurements detect errors without collapsing state",
+      "Error correction enables reliable quantum computation"
+    ],
+
+    "core_idea": {
+      "description": "Encode one logical qubit into multiple physical qubits so errors can be detected and corrected."
+    }
+  },
+
+  "basic_codes": {
+
+    "three_qubit_bit_flip_code": {
+
+      "encoding": "|ψ⟩ → α|000⟩ + β|111⟩",
+
+      "purpose": "Correct bit flip errors",
+
+      "steps": [
+
+        "Encode logical qubit into 3 physical qubits",
+
+        "Detect which qubit flipped",
+
+        "Apply correction gate"
+      ]
+    },
+
+    "three_qubit_phase_flip_code": {
+
+      "encoding": "|ψ⟩ → α|+++⟩ + β|---⟩",
+
+      "purpose": "Correct phase flip errors"
+    },
+
+    "shor_code": {
+
+      "description": "Combines bit flip and phase flip protection",
+
+      "qubits_required": 9,
+
+      "importance": "First complete quantum error correction code"
+    }
+  },
+
+  "syndrome_measurement": {
+
+    "description": "Ancilla qubits measure parity information without collapsing logical state.",
+
+    "benefit": "Detect errors indirectly without destroying superposition"
+  },
+
+  "circuit_examples": [
+
+    {
+      "name": "3-Qubit Bit Flip Encoding",
+
+      "description": "Encode logical qubit using CNOT gates",
+
+      "circuit": [
+
+        { "gate": "CNOT", "control": 0, "target": 1 },
+
+        { "gate": "CNOT", "control": 0, "target": 2 }
+      ]
+    },
+
+    {
+      "name": "Error Detection",
+
+      "description": "Measure parity using ancilla qubits",
+
+      "circuit_pattern": [
+
+        "Compare qubit 0 and qubit 1",
+
+        "Compare qubit 1 and qubit 2"
+      ]
+    }
+  ],
+
+  "logical_vs_physical": {
+
+    "logical_qubit": "Protected qubit representing actual information",
+
+    "physical_qubits": "Multiple qubits used to encode logical qubit"
+  },
+
+  "importance": [
+
+    "Essential for scalable quantum computers",
+
+    "Protects against decoherence",
+
+    "Improves computation reliability",
+
+    "Required for fault tolerant quantum computing"
+  ],
+
+  "limitations": [
+
+    "Requires many physical qubits",
+
+    "Complex circuit design",
+
+    "Increases computational overhead"
+  ],
+
+  "connection_to_noise": {
+
+    "relationship": "QEC methods are designed to counteract noise models such as bit flip and phase flip errors."
+  },
+
+  "summary": "Quantum Error Correction enables reliable quantum computation by encoding logical qubits into multiple physical qubits and correcting errors without destroying quantum information.",
+
+  "difficulty": "medium",
+
+  "estimated_time": "35-45 minutes",
+
+  "prerequisites": [
+    "Multi-Qubit Systems",
+    "Entanglement",
+    "Quantum Noise Models",
+    "Controlled Gates"
+  ],
+
+  "simulation": {
+    "initial_state": "|000⟩",
+    "operations": [
+      { "gate": "CNOT", "control": 0, "target": 1 },
+      { "gate": "CNOT", "control": 0, "target": 2 },
+      { "gate": "X", "target": 1 },
+      { "gate": "CNOT", "control": 0, "target": 1 },
+      { "gate": "CNOT", "control": 0, "target": 2 },
+      { "gate": "MEASURE", "target": 0 }
+    ],
+    "expected_result": "|0⟩ — error detected and corrected by majority vote",
+    "try_this": [
+      "First two CNOTs encode the logical qubit into all 3 physical qubits",
+      "X on qubit 1 simulates a bit-flip error on one physical qubit",
+      "Final CNOTs perform syndrome measurement to detect and correct the error"
+    ]
+  },
+
+  "quiz": [
+    {
+      "question": "Why can't we simply copy a qubit for error correction?",
+      "options": [
+        "Copying is too slow",
+        "The no-cloning theorem prevents copying an unknown quantum state",
+        "Copies would have different frequencies",
+        "Error correction doesn't use copies"
+      ],
+      "answer": "The no-cloning theorem prevents copying an unknown quantum state",
+      "explanation": "Quantum mechanics forbids exact copying of an unknown quantum state, so QEC uses entanglement instead."
+    },
+    {
+      "question": "How many physical qubits does the 3-qubit bit-flip code use to protect 1 logical qubit?",
+      "options": ["1", "2", "3", "5"],
+      "answer": "3",
+      "explanation": "The 3-qubit bit-flip code encodes 1 logical qubit into 3 physical qubits: α|000⟩ + β|111⟩."
+    },
+    {
+      "question": "What do syndrome measurements detect?",
+      "options": [
+        "The value of all qubits",
+        "Which qubit experienced an error, without collapsing the logical state",
+        "The entanglement entropy",
+        "The number of gates applied"
+      ],
+      "answer": "Which qubit experienced an error, without collapsing the logical state",
+      "explanation": "Syndrome measurements use ancilla qubits to measure parity information, detecting errors without measuring the logical state."
+    },
+    {
+      "question": "How many physical qubits does the Shor code use?",
+      "options": ["3", "5", "7", "9"],
+      "answer": "9",
+      "explanation": "The Shor code requires 9 physical qubits and can correct both bit-flip and phase-flip errors."
+    }
+  ]
+}

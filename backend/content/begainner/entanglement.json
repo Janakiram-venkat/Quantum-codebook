@@ -1,0 +1,181 @@
+{
+  "id": "entanglement",
+  "title": "Quantum Entanglement",
+  "level": "beginner",
+  "theory": {
+    "introduction": "Quantum entanglement is a phenomenon where multiple qubits become linked in such a way that their states cannot be described independently. The system must be treated as a whole.",
+    "key_points": [
+      "Entangled qubits form a single combined state",
+      "The state of one qubit depends on the other",
+      "Measurement of one qubit determines the correlated outcome of the other",
+      "Entanglement is stronger than classical correlation",
+      "It is used in quantum teleportation, cryptography, and computing"
+    ],
+    "math": "|Φ+⟩ = (|00⟩ + |11⟩) / √2",
+    "intuition": "Imagine two perfectly synchronized coins that always match when observed, even though neither had a fixed outcome in advance.",
+    "sections": [
+      {
+        "title": "What Makes Entanglement Special",
+        "content": [
+          "In classical systems, objects can be correlated but still described separately",
+          "In quantum systems, entangled qubits cannot be separated into individual states",
+          "The full system must be described together",
+          "This is called a non-separable state"
+        ]
+      },
+      {
+        "title": "Mathematical Structure",
+        "content": [
+          "A general 2-qubit state is |ψ⟩ = α|00⟩ + β|01⟩ + γ|10⟩ + δ|11⟩",
+          "If it cannot be written as a product of two single-qubit states, it is entangled"
+        ],
+        "examples": [
+          "(|00⟩ + |11⟩)/√2 → entangled",
+          "(|0⟩ + |1⟩) ⊗ (|0⟩ + |1⟩) → not entangled"
+        ]
+      },
+      {
+        "title": "Bell States",
+        "content": [
+          "Bell states are the simplest examples of maximally entangled states",
+          "They represent the strongest possible quantum correlations between two qubits"
+        ],
+        "examples": [
+          "|Φ+⟩ = (|00⟩ + |11⟩)/√2",
+          "|Φ−⟩ = (|00⟩ − |11⟩)/√2",
+          "|Ψ+⟩ = (|01⟩ + |10⟩)/√2",
+          "|Ψ−⟩ = (|01⟩ − |10⟩)/√2"
+        ]
+      },
+      {
+        "title": "How Entanglement Is Created",
+        "content": [
+          "Start with two qubits in |00⟩",
+          "Apply H to the first qubit to create superposition",
+          "Apply CNOT to link both qubits",
+          "The result is an entangled Bell state"
+        ]
+      },
+      {
+        "title": "Measurement Behavior",
+        "content": [
+          "Measuring one qubit instantly fixes the correlated outcome of the other",
+          "If the first qubit is 0, the second is also 0 in |Φ+⟩",
+          "If the first qubit is 1, the second is also 1 in |Φ+⟩",
+          "Before measurement, neither qubit has a definite classical value"
+        ]
+      },
+      {
+        "title": "Not Faster-Than-Light Communication",
+        "content": [
+          "Entanglement does not let us send information instantly",
+          "Measurement outcomes are still random",
+          "The correlation appears only after comparing results",
+          "This preserves causality"
+        ]
+      },
+      {
+        "title": "Bloch Sphere Limitation",
+        "content": [
+          "Single qubits can be visualized on the Bloch sphere",
+          "Entangled states cannot be represented by separate individual Bloch spheres",
+          "They live in a higher-dimensional joint state space"
+        ]
+      }
+    ]
+  },
+  "examples": [
+    {
+      "title": "Create Bell State (Φ+)",
+      "description": "Apply H and CNOT to create entanglement.",
+      "circuit": [
+        {
+          "gate": "H",
+          "target": 0
+        },
+        {
+          "gate": "CNOT",
+          "control": 0,
+          "target": 1
+        }
+      ],
+      "result": "(|00⟩ + |11⟩)/√2"
+    },
+    {
+      "title": "Measure Entangled Qubits",
+      "description": "Measure both qubits after entanglement.",
+      "circuit": [
+        {
+          "gate": "H",
+          "target": 0
+        },
+        {
+          "gate": "CNOT",
+          "control": 0,
+          "target": 1
+        },
+        {
+          "gate": "MEASURE",
+          "target": 0
+        },
+        {
+          "gate": "MEASURE",
+          "target": 1
+        }
+      ],
+      "result": "00 or 11, never 01 or 10"
+    },
+    {
+      "title": "Correlation Check",
+      "description": "Verify that both qubits always match.",
+      "note": "Even though each outcome is random, the pair is perfectly correlated."
+    }
+  ],
+  "simulation": {
+    "initial_state": "|00⟩",
+    "operations": [
+      {
+        "gate": "H",
+        "target": 0
+      },
+      {
+        "gate": "CNOT",
+        "control": 0,
+        "target": 1
+      }
+    ],
+    "expected_result": "(|00⟩ + |11⟩)/√2"
+  },
+  "quiz": [
+    {
+      "question": "What is entanglement?",
+      "options": [
+        "Independent qubits",
+        "Linked quantum states",
+        "Random noise",
+        "Measurement process"
+      ],
+      "answer": "Linked quantum states"
+    },
+    {
+      "question": "Which gates create entanglement in this lesson?",
+      "options": [
+        "X gate",
+        "Z gate",
+        "H + CNOT",
+        "Measurement"
+      ],
+      "answer": "H + CNOT"
+    },
+    {
+      "question": "What results can you get from a Bell state measurement?",
+      "options": [
+        "00 or 11",
+        "01 or 10",
+        "Only 00",
+        "Random unrelated values"
+      ],
+      "answer": "00 or 11"
+    }
+  ]
+}

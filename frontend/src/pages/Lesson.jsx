@@ -1,0 +1,141 @@
+import { createElement, useEffect, useState } from 'react'
+import { useParams } from 'react-router-dom'
+import axios from 'axios'
+import { Loader2, AlertCircle, BookOpen, Cpu, HelpCircle } from 'lucide-react'
+import TheorySection from '../components/TheorySection'
+import SimulationSection from '../components/SimulationSection'
+import QuizSection from '../components/QuizSection'
+
+function SectionIntro({ icon, label, title, subtitle }) {
+  return (
+    <header className="section-header" style={{ marginBottom: 24 }}>
+      <div className="section-heading">
+        <p className="section-eyebrow">{label}</p>
+        <div className="flex items-start gap-4">
+          <div
+            className="w-11 h-11 rounded-2xl flex items-center justify-center flex-shrink-0"
+            style={{ background: 'var(--surface-soft)', border: '1px solid var(--border)' }}
+          >
+            {createElement(icon, { size: 18, color: 'var(--accent-strong)' })}
+          </div>
+          <div>
+            <h2 className="section-title">{title}</h2>
+            {subtitle && <p className="section-subtitle">{subtitle}</p>}
+          </div>
+        </div>
+      </div>
+    </header>
+  )
+}
+
+export default function Lesson() {
+  const { id } = useParams()
+  const [data, setData] = useState(null)
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setLoading(true)
+    setError(null)
+    setData(null)
+    axios
+      .get(`/api/lessons/${id}`)
+      .then(res => setData(res.data))
+      .catch(() => setError('Could not load lesson. Make sure the backend is running.'))
+      .finally(() => setLoading(false))
+  }, [id])
+
+  const hasSimulation = Boolean(data?.simulation)
+  const hasQuiz = data?.quiz?.length > 0
+  const lessonSummary =
+    data?.theory?.introduction ||
+    data?.theory?.why_it_matters ||
+    data?.summary ||
+    'Read the lesson, inspect the circuit, and review the core ideas step by step.'
+
+  return (
+    <article className="px-2 py-6 md:px-4 md:py-10">
+      {loading && (
+        <div className="flex items-center gap-3 py-20 justify-center" style={{ color: 'var(--text-muted)' }}>
+          <Loader2 size={20} className="animate-spin" />
+          Loading lesson...
+        </div>
+      )}
+
+      {error && (
+        <div
+          className="flex items-start gap-3 p-4 rounded-2xl mt-8"
+          style={{
+            background: 'var(--danger-soft)',
+            border: '1px solid var(--danger-border)',
+            color: 'var(--danger)',
+          }}
+        >
+          <AlertCircle size={18} className="flex-shrink-0 mt-0.5" />
+          <p className="text-sm">{error}</p>
+        </div>
+      )}
+
+      {data && (
+        <>
+          <header className="page-header-card" style={{ marginBottom: 24 }}>
+            <h1
+              className="text-4xl md:text-5xl font-semibold mb-4"
+              style={{ color: 'var(--text-primary)', letterSpacing: '-0.05em', lineHeight: 1.02 }}
+            >
+              {data.title}
+            </h1>
+            <p
+              className="text-base md:text-[17px] max-w-3xl"
+              style={{ color: 'var(--text-secondary)', lineHeight: 1.8 }}
+            >
+              {lessonSummary}
+            </p>
+          </header>
+
+          <section className="section-shell" aria-labelledby="theory-heading" style={{ marginBottom: 24 }}>
+            <SectionIntro
+              icon={BookOpen}
+              label="Lesson Content"
+              title="Theory and intuition"
+            />
+            <div id="theory-heading">
+              <TheorySection lesson={data} />
+            </div>
+          </section>
+
+          {hasSimulation && (
+            <section className="section-shell" aria-labelledby="simulation-heading" style={{ marginBottom: 24 }}>
+              <SectionIntro
+                icon={Cpu}
+                label="Interactive Lab"
+                title="Quantum simulator"
+                subtitle="Run the backend-powered circuit and inspect amplitudes or measurement results from the current lesson."
+              />
+              <div id="simulation-heading">
+                <SimulationSection topic={id} simulation={data.simulation} theory={data.theory} />
+              </div>
+            </section>
+          )}
+
+          {hasQuiz && (
+            <section className="section-shell" aria-labelledby="quiz-heading">
+              <SectionIntro
+                icon={HelpCircle}
+                label="Knowledge Check"
+                title="Quiz and recap"
+                subtitle="Answer the questions below to confirm you understand the lesson before moving on."
+              />
+              <div id="quiz-heading">
+                <QuizSection quiz={data.quiz} />
+              </div>
+            </section>
+          )}
+
+          <div className="py-10" />
+        </>
+      )}
+    </article>
+  )
+}

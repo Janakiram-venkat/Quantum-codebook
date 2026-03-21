@@ -1,0 +1,75 @@
+import { BlockMath, InlineMath } from 'react-katex'
+
+import 'katex/dist/katex.min.css'
+import { normalizeQuantumText } from '../lib/quantumText.js'
+
+const LATEX_REPLACEMENTS = [
+  ['→', '\\to'],
+  ['√', '\\sqrt'],
+  ['⊗', '\\otimes'],
+  ['⟨', '\\langle'],
+  ['⟩', '\\rangle'],
+  ['₀', '_0'],
+  ['₁', '_1'],
+  ['²', '^2'],
+  ['α', '\\alpha'],
+  ['β', '\\beta'],
+  ['γ', '\\gamma'],
+  ['δ', '\\delta'],
+  ['ψ', '\\psi'],
+  ['Φ', '\\Phi'],
+  ['Ψ', '\\Psi'],
+  ['−', '-'],
+  ['×', '\\times'],
+  ['·', '\\cdot'],
+]
+
+function normalizeToLatex(value) {
+  let text = normalizeQuantumText(value)
+  if (!text) return ''
+
+  LATEX_REPLACEMENTS.forEach(([from, to]) => {
+    text = text.split(from).join(to)
+  })
+
+  text = text.replace(/\|([^|]+?)\\rangle/g, '\\ket{$1}')
+  text = text.replace(/\\langle([^|]+?)\|/g, '\\bra{$1}')
+  text = text.replace(/\\Phi([+-])/g, '\\Phi^{$1}')
+  text = text.replace(/\\Psi([+-])/g, '\\Psi^{$1}')
+  text = text.replace(/\\sqrt2/g, '\\sqrt{2}')
+  text = text.replace(/\\sqrt([0-9]+)/g, '\\sqrt{$1}')
+  text = text.replace(/\s+\/\s+/g, ' / ')
+
+  return text
+}
+
+export default function MathText({
+  value,
+  block = false,
+  className = '',
+  style,
+  fallbackClassName = '',
+}) {
+  const latex = normalizeToLatex(value)
+  if (!latex) return null
+
+  const fallback = (
+    <span className={fallbackClassName} style={style}>
+      {normalizeQuantumText(value)}
+    </span>
+  )
+
+  if (block) {
+    return (
+      <div className={className} style={style}>
+        <BlockMath math={latex} renderError={() => fallback} />
+      </div>
+    )
+  }
+
+  return (
+    <span className={className} style={style}>
+      <InlineMath math={latex} renderError={() => fallback} />
+    </span>
+  )
+}

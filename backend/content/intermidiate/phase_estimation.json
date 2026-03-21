@@ -1,0 +1,222 @@
+{
+  "id": "phase_estimation",
+  "title": "Quantum Phase Estimation",
+  "level": "intermediate",
+
+  "theory": {
+    "introduction": "Quantum Phase Estimation (QPE) is one of the most important quantum algorithms. It estimates the phase (eigenvalue) associated with an eigenvector of a unitary operator. QPE forms the foundation of many advanced algorithms including Shor's algorithm and Variational Quantum Eigensolver (VQE).",
+
+    "key_points": [
+      "QPE estimates eigenvalues of unitary operators",
+      "Uses Quantum Fourier Transform (QFT) as a core subroutine",
+      "Precision depends on number of counting qubits",
+      "Requires controlled unitary operations",
+      "Transforms phase information into measurable probabilities"
+    ],
+
+    "mathematical_representation": {
+
+      "unitary_eigen_equation": "U|ψ⟩ = e^{2πiφ}|ψ⟩",
+
+      "phase_range": "φ is a real value between 0 and 1",
+
+      "binary_expansion": "φ = 0.φ1φ2φ3... (binary representation)",
+
+      "precision_relation": "More counting qubits → higher phase precision"
+    },
+
+    "intuition": {
+      "description": "Phase Estimation extracts hidden phase information encoded in a quantum state. The algorithm converts phase differences into measurable probabilities using interference patterns created by QFT.",
+
+      "core_idea": "Convert phase information into computational basis states that can be measured."
+    }
+  },
+
+  "algorithm_structure": {
+
+    "registers": {
+      "counting_register": "n qubits initialized in superposition using Hadamard gates",
+      "eigenstate_register": "qubit prepared in eigenstate |ψ⟩ of unitary operator U"
+    },
+
+    "steps": [
+
+      {
+        "step": 1,
+        "description": "Initialize counting qubits to |0⟩ state"
+      },
+
+      {
+        "step": 2,
+        "description": "Apply Hadamard gates to counting register creating superposition"
+      },
+
+      {
+        "step": 3,
+        "description": "Apply controlled-U operations with exponentially increasing powers"
+      },
+
+      {
+        "step": 4,
+        "description": "Apply inverse QFT on counting register"
+      },
+
+      {
+        "step": 5,
+        "description": "Measure counting register to obtain binary phase estimate"
+      }
+    ]
+  },
+
+  "circuit_examples": [
+
+    {
+      "name": "Basic Phase Estimation Circuit",
+
+      "description": "Uses 3 counting qubits to estimate phase",
+
+      "circuit_pattern": [
+
+        "Apply H on counting qubits",
+
+        "Apply controlled-U^1 from qubit 0",
+
+        "Apply controlled-U^2 from qubit 1",
+
+        "Apply controlled-U^4 from qubit 2",
+
+        "Apply inverse QFT",
+
+        "Measure counting register"
+      ]
+    },
+
+    {
+      "name": "Example with Phase Gate",
+
+      "description": "Estimate phase of a simple phase rotation gate",
+
+      "unitary": "U = Rφ",
+
+      "expected_output": "Binary approximation of phase value"
+    }
+  ],
+
+  "visualization": {
+
+    "phase_kickback": {
+      "description": "Controlled unitary operations transfer phase information to counting qubits.",
+      "importance": "Key mechanism enabling phase measurement"
+    },
+
+    "interference": {
+      "description": "Inverse QFT converts phase differences into measurable probability peaks."
+    }
+  },
+
+  "precision": {
+
+    "relationship": "Precision increases exponentially with number of counting qubits",
+
+    "example": {
+      "1_qubit_precision": "1 bit precision",
+      "3_qubits_precision": "3 bit precision",
+      "n_qubits_precision": "n bit precision"
+    }
+  },
+
+  "applications": [
+
+    "Shor's factoring algorithm",
+
+    "Quantum chemistry simulations",
+
+    "Eigenvalue estimation",
+
+    "Quantum simulation",
+
+    "Amplitude estimation",
+
+    "Variational quantum algorithms"
+  ],
+
+  "connection_to_qft": {
+
+    "role": "Inverse QFT extracts binary representation of phase",
+
+    "dependency": "QPE relies on efficient implementation of QFT"
+  },
+
+  "summary": "Quantum Phase Estimation efficiently extracts eigenvalue information encoded as phase in quantum states. It is a fundamental building block for many powerful quantum algorithms.",
+
+  "difficulty": "medium",
+
+  "estimated_time": "30-40 minutes",
+
+  "prerequisites": [
+    "Multi-Qubit Systems",
+    "Quantum Fourier Transform",
+    "Controlled Gates",
+    "Phase Gates"
+  ],
+
+  "simulation": {
+    "initial_state": "|00⟩",
+    "operations": [
+      { "gate": "H", "target": 0 },
+      { "gate": "H", "target": 1 },
+      { "gate": "CNOT", "control": 0, "target": 1 },
+      { "gate": "Z", "target": 0 },
+      { "gate": "H", "target": 0 },
+      { "gate": "MEASURE", "target": 0 }
+    ],
+    "expected_result": "Phase information extracted from counting register",
+    "try_this": [
+      "Qubit 0 acts as the counting register; qubit 1 as the eigenstate register",
+      "The controlled-CNOT transfers phase from the eigenstate to the counting qubit",
+      "The inverse QFT (simplified here as H) converts phase into a measurable probability"
+    ]
+  },
+
+  "quiz": [
+    {
+      "question": "What does Quantum Phase Estimation estimate?",
+      "options": [
+        "The number of qubits needed",
+        "The phase (eigenvalue) of a unitary operator",
+        "The probability of measurement outcomes",
+        "The entanglement entropy"
+      ],
+      "answer": "The phase (eigenvalue) of a unitary operator",
+      "explanation": "QPE estimates the phase φ in the eigenvalue equation U|ψ⟩ = e^{2πiφ}|ψ⟩."
+    },
+    {
+      "question": "How does precision improve in QPE?",
+      "options": [
+        "By using faster gates",
+        "By adding more counting qubits",
+        "By measuring more times",
+        "By using classical optimization"
+      ],
+      "answer": "By adding more counting qubits",
+      "explanation": "Each additional counting qubit doubles the precision of the phase estimate."
+    },
+    {
+      "question": "Which algorithm is QPE a core component of?",
+      "options": ["Grover's algorithm", "VQE", "Shor's algorithm", "Quantum teleportation"],
+      "answer": "Shor's algorithm",
+      "explanation": "Shor's factoring algorithm relies on QPE to extract the period needed for factorization."
+    },
+    {
+      "question": "What is the purpose of the inverse QFT in QPE?",
+      "options": [
+        "To create superposition",
+        "To convert phase information into measurable computational basis states",
+        "To entangle qubits",
+        "To apply error correction"
+      ],
+      "answer": "To convert phase information into measurable computational basis states",
+      "explanation": "The inverse QFT maps the phase encoded in the counting register into a binary number that can be measured."
+    }
+  ]
+}

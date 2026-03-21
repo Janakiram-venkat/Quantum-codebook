@@ -1,0 +1,171 @@
+{
+  "id": "superposition",
+  "title": "Quantum Superposition",
+  "level": "beginner",
+
+  "theory": {
+    "introduction": "Superposition is one of the most important ideas in quantum computing. It means a qubit can exist in a combination of multiple states at the same time, rather than being fixed as only 0 or 1.",
+
+    "start_from_zero": "In classical computing, a bit is always either 0 or 1. There is no in-between. But a qubit can be in a mixture of both states until we measure it.",
+
+    "why_it_matters": "Superposition allows quantum computers to process many possibilities at once. This is the foundation of quantum speedup and enables powerful algorithms.",
+
+    "core_idea": "A qubit in superposition is described as a weighted combination of |0⟩ and |1⟩, where the weights are called probability amplitudes.",
+
+    "key_points": [
+      "A qubit can exist in a combination of |0⟩ and |1⟩",
+      "This combination is called superposition",
+      "Amplitudes determine probabilities",
+      "Probabilities are obtained by squaring amplitudes",
+      "Measurement collapses the superposition",
+      "Superposition is not the same as classical randomness"
+    ],
+
+    "step_by_step_understanding": [
+      "Step 1: Start with a qubit in |0⟩",
+      "Step 2: Apply a Hadamard gate",
+      "Step 3: The qubit enters superposition",
+      "Step 4: It now has probabilities for 0 and 1",
+      "Step 5: Measurement collapses it to one outcome"
+    ],
+
+    "math": {
+      "general_state": "|ψ⟩ = α|0⟩ + β|1⟩",
+      "equal_superposition": "|ψ⟩ = (|0⟩ + |1⟩)/√2",
+      "normalization": "|α|² + |β|² = 1",
+      "explanation": "α and β are amplitudes. Their squared values give probabilities."
+    },
+
+    "intuition": {
+      "coin": "Like a spinning coin — not heads or tails until observed.",
+      "wave": "A qubit behaves like a wave spread across possibilities.",
+      "not_classical_random": "Unlike a random bit, a qubit truly exists in a combined state until measured."
+    },
+
+    "sections": [
+      {
+        "title": "Equal Superposition",
+        "content": [
+          "The most common superposition is created using the Hadamard gate",
+          "|0⟩ → H → (|0⟩ + |1⟩)/√2",
+          "Both outcomes have equal probability (50%)"
+        ]
+      },
+      {
+        "title": "Unequal Superposition",
+        "content": [
+          "Superposition does not have to be equal",
+          "|ψ⟩ = √0.8|0⟩ + √0.2|1⟩",
+          "The qubit is more likely to be measured as |0⟩"
+        ]
+      },
+      {
+        "title": "Superposition vs Classical Randomness",
+        "content": [
+          "A classical random bit is either 0 or 1 (unknown to us)",
+          "A qubit in superposition is truly in a combination of states",
+          "Quantum systems can show interference effects, unlike classical randomness"
+        ]
+      },
+      {
+        "title": "Bloch Sphere Interpretation",
+        "content": [
+          "Superposition corresponds to points on the surface of the Bloch sphere",
+          "|0⟩ is at the north pole",
+          "|1⟩ is at the south pole",
+          "Equal superposition lies on the equator",
+          "Different superpositions correspond to different positions on the sphere"
+        ]
+      },
+      {
+        "title": "Superposition and Parallelism",
+        "content": [
+          "A qubit in superposition represents multiple possibilities at once",
+          "Quantum algorithms use this to explore many paths simultaneously",
+          "However, measurement gives only one result, so algorithms must use interference cleverly"
+        ]
+      }
+    ]
+  },
+
+  "examples": [
+    {
+      "title": "Create Equal Superposition",
+      "description": "Apply a Hadamard gate to |0⟩.",
+      "circuit": [
+        { "gate": "H", "target": 0 }
+      ],
+      "result": "(|0⟩ + |1⟩)/√2"
+    },
+    {
+      "title": "Measure Superposition",
+      "description": "Measure a qubit in superposition.",
+      "circuit": [
+        { "gate": "H", "target": 0 },
+        { "gate": "MEASURE", "target": 0 }
+      ],
+      "result": "0 or 1 with equal probability"
+    },
+    {
+      "title": "Biasing the State",
+      "description": "Create unequal superposition.",
+      "state": "|ψ⟩ = √0.8|0⟩ + √0.2|1⟩",
+      "result": "More likely to measure 0"
+    }
+  ],
+
+  "common_mistakes": [
+    "Thinking a qubit is literally both 0 and 1 physically",
+    "Confusing superposition with classical randomness",
+    "Ignoring amplitudes and focusing only on probabilities",
+    "Assuming superposition means we get both outputs after measurement",
+    "Forgetting that measurement destroys superposition"
+  ],
+
+  "simulation": {
+    "initial_state": "|0⟩",
+    "operations": [
+      { "gate": "H", "target": 0 }
+    ],
+    "expected_result": "(|0⟩ + |1⟩)/√2",
+    "try_this": [
+      "Measure multiple times and observe distribution",
+      "Apply H twice and observe return to |0⟩",
+      "Apply Z after H and observe phase change"
+    ]
+  },
+
+  "quiz": [
+    {
+      "question": "What is superposition?",
+      "options": [
+        "A qubit being 0 or 1 randomly",
+        "A qubit being in a combination of states",
+        "A measurement process",
+        "A classical probability"
+      ],
+      "answer": "A qubit being in a combination of states"
+    },
+    {
+      "question": "Which gate commonly creates superposition?",
+      "options": ["X", "Z", "H", "CNOT"],
+      "answer": "H"
+    },
+    {
+      "question": "What happens after measurement?",
+      "options": [
+        "State remains the same",
+        "State collapses",
+        "State doubles",
+        "Nothing changes"
+      ],
+      "answer": "State collapses"
+    },
+    {
+      "question": "Is superposition the same as classical randomness?",
+      "options": ["Yes", "No"],
+      "answer": "No",
+      "explanation": "Superposition is a quantum phenomenon with interference effects."
+    }
+  ]
+}

@@ -1,0 +1,259 @@
+{
+  "id": "variational_quantum_eigensolver",
+  "title": "Variational Quantum Eigensolver (VQE)",
+  "level": "intermediate",
+
+  "theory": {
+    "introduction": "Variational Quantum Eigensolver (VQE) is a hybrid quantum-classical algorithm used to find the minimum eigenvalue of a Hamiltonian. It is widely used in quantum chemistry, optimization, and material science. VQE combines parameterized quantum circuits with classical optimization to solve problems efficiently on near-term quantum hardware.",
+
+    "key_points": [
+      "VQE is a hybrid quantum-classical algorithm",
+      "Uses parameterized quantum circuits",
+      "Classical optimizer updates circuit parameters",
+      "Minimizes expectation value of Hamiltonian",
+      "Works well on noisy intermediate-scale quantum (NISQ) devices"
+    ],
+
+    "core_problem": {
+      "description": "Find the ground state energy (minimum eigenvalue) of a Hamiltonian H.",
+      "importance": "Ground state energy is important in chemistry, physics, and optimization problems."
+    },
+
+    "mathematical_representation": {
+
+      "expectation_value": "E(θ) = ⟨ψ(θ)|H|ψ(θ)⟩",
+
+      "objective": "Find parameters θ that minimize expectation value",
+
+      "variational_principle": "E(θ) ≥ E_ground",
+
+      "hamiltonian": "H represents physical system energy"
+    }
+  },
+
+  "algorithm_structure": {
+
+    "components": {
+
+      "parameterized_circuit": {
+        "description": "Quantum circuit with adjustable parameters (rotation angles).",
+        "example_gates": ["Rx(θ)", "Ry(θ)", "Rz(θ)", "CNOT"]
+      },
+
+      "measurement": {
+        "description": "Expectation value of Hamiltonian is estimated using repeated measurements."
+      },
+
+      "classical_optimizer": {
+        "description": "Classical algorithm updates parameters to minimize energy.",
+        "examples": ["Gradient Descent", "COBYLA", "Adam"]
+      }
+    },
+
+    "workflow": [
+
+      {
+        "step": 1,
+        "description": "Initialize parameter values θ randomly"
+      },
+
+      {
+        "step": 2,
+        "description": "Prepare quantum state using parameterized circuit"
+      },
+
+      {
+        "step": 3,
+        "description": "Measure expectation value of Hamiltonian"
+      },
+
+      {
+        "step": 4,
+        "description": "Send measurement result to classical optimizer"
+      },
+
+      {
+        "step": 5,
+        "description": "Optimizer updates parameters"
+      },
+
+      {
+        "step": 6,
+        "description": "Repeat until convergence"
+      }
+    ]
+  },
+
+  "circuit_examples": [
+
+    {
+      "name": "Basic Parameterized Circuit",
+
+      "description": "Simple 2-qubit variational ansatz",
+
+      "circuit": [
+
+        { "gate": "Ry", "target": 0, "parameter": "θ1" },
+
+        { "gate": "Ry", "target": 1, "parameter": "θ2" },
+
+        { "gate": "CNOT", "control": 0, "target": 1 },
+
+        { "gate": "Rz", "target": 1, "parameter": "θ3" }
+      ]
+    },
+
+    {
+      "name": "Optimization Loop",
+
+      "description": "Hybrid loop between quantum circuit and classical optimizer",
+
+      "workflow_pattern": [
+
+        "Initialize parameters θ",
+
+        "Run quantum circuit",
+
+        "Measure expectation value",
+
+        "Update θ using classical optimizer",
+
+        "Repeat until minimum energy found"
+      ]
+    }
+  ],
+
+  "visualization": {
+
+    "energy_landscape": {
+      "description": "Optimization searches for minimum value in energy landscape defined by parameters."
+    },
+
+    "hybrid_loop": {
+      "description": "Quantum processor evaluates circuit while classical computer updates parameters."
+    }
+  },
+
+  "applications": [
+
+    "Quantum chemistry simulations",
+
+    "Molecular energy estimation",
+
+    "Material science",
+
+    "Optimization problems",
+
+    "Drug discovery",
+
+    "Combinatorial optimization"
+  ],
+
+  "advantages": [
+
+    "Works on current noisy quantum hardware",
+
+    "Requires fewer qubits than many other algorithms",
+
+    "Flexible circuit design",
+
+    "Combines strengths of classical and quantum computing"
+  ],
+
+  "limitations": [
+
+    "Optimization may get stuck in local minima",
+
+    "Requires many circuit evaluations",
+
+    "Performance depends on ansatz design",
+
+    "Measurement noise affects accuracy"
+  ],
+
+  "related_algorithms": [
+
+    "QAOA (Quantum Approximate Optimization Algorithm)",
+
+    "Variational Quantum Algorithms (VQA)"
+  ],
+
+  "summary": "VQE uses hybrid quantum-classical optimization to estimate ground state energies of physical systems. It is one of the most practical algorithms for near-term quantum computers.",
+
+  "difficulty": "medium",
+
+  "estimated_time": "35-45 minutes",
+
+  "prerequisites": [
+    "Multi-Qubit Systems",
+    "Quantum Gates",
+    "Measurement",
+    "Linear Algebra Basics"
+  ],
+
+  "simulation": {
+    "initial_state": "|00⟩",
+    "operations": [
+      { "gate": "H", "target": 0 },
+      { "gate": "Y", "target": 1 },
+      { "gate": "CNOT", "control": 0, "target": 1 },
+      { "gate": "Z", "target": 1 },
+      { "gate": "MEASURE", "target": 0 },
+      { "gate": "MEASURE", "target": 1 }
+    ],
+    "expected_result": "Parameterised ansatz state measured to estimate expectation value",
+    "try_this": [
+      "H and Y gates approximate rotation gates (Ry) for a simple variational ansatz",
+      "CNOT creates entanglement between qubits, essential for capturing correlations",
+      "Z adjusts the phase, simulating a second rotation (Rz) parameter",
+      "In real VQE, a classical optimizer would adjust these angles to minimize energy"
+    ]
+  },
+
+  "quiz": [
+    {
+      "question": "VQE is an example of what type of algorithm?",
+      "options": [
+        "Purely quantum algorithm",
+        "Classical algorithm with quantum speedup",
+        "Hybrid quantum-classical algorithm",
+        "Quantum error correction algorithm"
+      ],
+      "answer": "Hybrid quantum-classical algorithm",
+      "explanation": "VQE uses a quantum processor to evaluate parameterized circuits and a classical optimizer to update parameters."
+    },
+    {
+      "question": "What does VQE minimize?",
+      "options": [
+        "The number of qubits used",
+        "The expectation value of the Hamiltonian",
+        "The number of circuit gates",
+        "The measurement time"
+      ],
+      "answer": "The expectation value of the Hamiltonian",
+      "explanation": "VQE minimizes E(θ) = ⟨ψ(θ)|H|ψ(θ)⟩ to find the ground state energy."
+    },
+    {
+      "question": "What type of quantum circuit does VQE use?",
+      "options": [
+        "Fixed quantum circuit",
+        "Parameterized (variational) quantum circuit",
+        "Error-corrected circuit",
+        "Measurement-only circuit"
+      ],
+      "answer": "Parameterized (variational) quantum circuit",
+      "explanation": "VQE uses a parameterized ansatz circuit where gate rotation angles are adjusted by the classical optimizer."
+    },
+    {
+      "question": "Why is VQE suitable for NISQ devices?",
+      "options": [
+        "It requires no measurements",
+        "It uses shallow circuits and tolerates some noise",
+        "It only uses single-qubit gates",
+        "It doesn't require entanglement"
+      ],
+      "answer": "It uses shallow circuits and tolerates some noise",
+      "explanation": "VQE is designed for Noisy Intermediate-Scale Quantum (NISQ) devices because it uses short circuits that are less affected by decoherence."
+    }
+  ]
+}
