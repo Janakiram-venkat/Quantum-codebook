@@ -21,12 +21,12 @@ const DEFAULT_GATE_COLORS = {
   label: 'var(--diagram-default-label)',
 }
 
-const CELL_W = 72
-const CELL_H = 56
-const WIRE_Y_BASE = 28
-const QUBIT_GAP = 56
-const LEFT_PAD = 56
-const RIGHT_PAD = 48
+const CELL_W = 104
+const CELL_H = 80
+const WIRE_Y_BASE = 40
+const QUBIT_GAP = 84
+const LEFT_PAD = 72
+const RIGHT_PAD = 64
 
 function getNumQubits(ops) {
   let max = 0
@@ -37,7 +37,7 @@ function getNumQubits(ops) {
   return max + 1
 }
 
-export default function CircuitRenderer({ operations = [], initialState = '|0>' }) {
+export default function CircuitRenderer({ operations = [], initialState = '|0>', activeStep = null, onGateClick }) {
   if (!operations || operations.length === 0) {
     return (
       <div
@@ -57,14 +57,14 @@ export default function CircuitRenderer({ operations = [], initialState = '|0>' 
   const opsByCol = operations.map((op, i) => ({ ...op, col: i }))
 
   return (
-    <div style={{ overflowX: 'auto', borderRadius: '12px' }}>
+    <div style={{ overflowX: 'auto', borderRadius: '12px' }} className="pb-2">
       <svg
         width={svgW}
         height={svgH}
         viewBox={`0 0 ${svgW} ${svgH}`}
         style={{ display: 'block', minWidth: svgW }}
       >
-        <rect width={svgW} height={svgH} rx="12" fill="var(--diagram-canvas-bg)" />
+        <rect width={svgW} height={svgH} rx="14" fill="var(--diagram-canvas-bg)" />
 
         {Array.from({ length: numQubits }).map((_, qi) => {
           const y = WIRE_Y_BASE + qi * QUBIT_GAP + CELL_H / 2 - 4
@@ -73,30 +73,31 @@ export default function CircuitRenderer({ operations = [], initialState = '|0>' 
           return (
             <g key={qi}>
               <line
-                x1={LEFT_PAD - 8}
+                x1={LEFT_PAD - 12}
                 y1={y}
-                x2={svgW - RIGHT_PAD + 8}
+                x2={svgW - RIGHT_PAD + 12}
                 y2={y}
                 stroke="var(--diagram-wire)"
                 strokeWidth="1.5"
                 strokeDasharray="4 3"
               />
               <text
-                x={LEFT_PAD - 14}
+                x={LEFT_PAD - 18}
                 y={y + 4}
                 textAnchor="end"
-                fontSize="12"
+                fontSize="14"
                 fontFamily="monospace"
+                fontWeight="600"
                 fill="var(--diagram-label)"
                 opacity="0.92"
               >
                 {label}
               </text>
               <text
-                x={LEFT_PAD - 14}
-                y={y + 18}
+                x={LEFT_PAD - 18}
+                y={y + 20}
                 textAnchor="end"
-                fontSize="9"
+                fontSize="10"
                 fontFamily="monospace"
                 fill="var(--diagram-subtle)"
               >
@@ -110,25 +111,32 @@ export default function CircuitRenderer({ operations = [], initialState = '|0>' 
           const cx = LEFT_PAD + op.col * CELL_W + CELL_W / 2
           const targetY = WIRE_Y_BASE + op.target * QUBIT_GAP + CELL_H / 2 - 4
           const c = GATE_COLORS[op.gate] || DEFAULT_GATE_COLORS
+          const isActive = op.col === activeStep
+          
+          const gProps = {
+            className: `transition-all duration-300 ${isActive ? 'drop-shadow-[0_0_10px_var(--accent)] brightness-110' : 'drop-shadow-sm hover:drop-shadow-md hover:brightness-105 cursor-pointer'}`,
+            style: { transformOrigin: `${cx}px ${targetY}px` },
+            onClick: () => onGateClick?.(op, idx)
+          }
 
           if (op.gate === 'CNOT' && op.control !== undefined) {
             const controlY = WIRE_Y_BASE + op.control * QUBIT_GAP + CELL_H / 2 - 4
             return (
-              <g key={idx}>
+              <g key={idx} {...gProps}>
                 <line
                   x1={cx}
                   y1={controlY}
                   x2={cx}
                   y2={targetY}
                   stroke={c.stroke}
-                  strokeWidth="2"
-                  opacity="0.6"
+                  strokeWidth="3"
+                  opacity="0.65"
                 />
-                <circle cx={cx} cy={controlY} r="7" fill={c.fill} stroke={c.stroke} strokeWidth="1.5" />
-                <circle cx={cx} cy={targetY} r="14" fill="none" stroke={c.stroke} strokeWidth="2" />
-                <line x1={cx - 14} y1={targetY} x2={cx + 14} y2={targetY} stroke={c.stroke} strokeWidth="1.5" />
-                <line x1={cx} y1={targetY - 14} x2={cx} y2={targetY + 14} stroke={c.stroke} strokeWidth="1.5" />
-                <text x={cx} y={targetY + 28} textAnchor="middle" fontSize="9" fill={c.stroke} fontFamily="monospace">
+                <circle cx={cx} cy={controlY} r="10" fill={c.fill} stroke={c.stroke} strokeWidth="2.5" />
+                <circle cx={cx} cy={targetY} r="22" fill="none" stroke={c.stroke} strokeWidth="3" />
+                <line x1={cx - 22} y1={targetY} x2={cx + 22} y2={targetY} stroke={c.stroke} strokeWidth="2.5" />
+                <line x1={cx} y1={targetY - 22} x2={cx} y2={targetY + 22} stroke={c.stroke} strokeWidth="2.5" />
+                <text x={cx} y={targetY + 42} textAnchor="middle" fontSize="12" fill={c.stroke} fontFamily="monospace" fontWeight="600">
                   CNOT
                 </text>
               </g>
@@ -138,11 +146,11 @@ export default function CircuitRenderer({ operations = [], initialState = '|0>' 
           if (op.gate === 'CZ' && op.control !== undefined) {
             const controlY = WIRE_Y_BASE + op.control * QUBIT_GAP + CELL_H / 2 - 4
             return (
-              <g key={idx}>
-                <line x1={cx} y1={controlY} x2={cx} y2={targetY} stroke={c.stroke} strokeWidth="2" opacity="0.6" />
-                <circle cx={cx} cy={controlY} r="7" fill={c.fill} stroke={c.stroke} strokeWidth="1.5" />
-                <circle cx={cx} cy={targetY} r="7" fill={c.fill} stroke={c.stroke} strokeWidth="1.5" />
-                <text x={cx} y={targetY + 22} textAnchor="middle" fontSize="9" fill={c.stroke} fontFamily="monospace">
+              <g key={idx} {...gProps}>
+                <line x1={cx} y1={controlY} x2={cx} y2={targetY} stroke={c.stroke} strokeWidth="3" opacity="0.65" />
+                <circle cx={cx} cy={controlY} r="10" fill={c.fill} stroke={c.stroke} strokeWidth="2.5" />
+                <circle cx={cx} cy={targetY} r="10" fill={c.fill} stroke={c.stroke} strokeWidth="2.5" />
+                <text x={cx} y={targetY + 32} textAnchor="middle" fontSize="12" fill={c.stroke} fontFamily="monospace" fontWeight="600">
                   CZ
                 </text>
               </g>
@@ -151,25 +159,25 @@ export default function CircuitRenderer({ operations = [], initialState = '|0>' 
 
           if (op.gate === 'MEASURE') {
             return (
-              <g key={idx}>
+              <g key={idx} {...gProps}>
                 <rect
-                  x={cx - 20}
-                  y={targetY - 18}
-                  width={40}
-                  height={36}
-                  rx="8"
+                  x={cx - 32}
+                  y={targetY - 26}
+                  width={64}
+                  height={52}
+                  rx="12"
                   fill={c.shell}
                   stroke={c.stroke}
-                  strokeWidth="1.5"
+                  strokeWidth={isActive ? "3" : "2.5"}
                 />
                 <path
-                  d={`M ${cx - 10} ${targetY + 6} A 10 10 0 0 1 ${cx + 10} ${targetY + 6}`}
+                  d={`M ${cx - 16} ${targetY + 10} A 16 16 0 0 1 ${cx + 16} ${targetY + 10}`}
                   fill="none"
                   stroke={c.stroke}
-                  strokeWidth="1.5"
+                  strokeWidth="2.5"
                 />
-                <line x1={cx} y1={targetY + 6} x2={cx + 8} y2={targetY - 4} stroke={c.stroke} strokeWidth="1.5" />
-                <text x={cx} y={targetY + 26} textAnchor="middle" fontSize="9" fill={c.stroke} fontFamily="monospace">
+                <line x1={cx} y1={targetY + 10} x2={cx + 13} y2={targetY - 6} stroke={c.stroke} strokeWidth="2.5" />
+                <text x={cx} y={targetY + 40} textAnchor="middle" fontSize="12" fill={c.stroke} fontFamily="monospace" fontWeight="600">
                   M
                 </text>
               </g>
@@ -177,22 +185,22 @@ export default function CircuitRenderer({ operations = [], initialState = '|0>' 
           }
 
           return (
-            <g key={idx}>
+            <g key={idx} {...gProps}>
               <rect
-                x={cx - 22}
-                y={targetY - 18}
-                width={44}
-                height={36}
-                rx="8"
+                x={cx - 34}
+                y={targetY - 30}
+                width={68}
+                height={60}
+                rx="12"
                 fill={c.shell}
                 stroke={c.stroke}
-                strokeWidth="1.5"
+                strokeWidth={isActive ? "3" : "2.5"}
               />
               <text
                 x={cx}
-                y={targetY + 5}
+                y={targetY + 8}
                 textAnchor="middle"
-                fontSize="13"
+                fontSize="20"
                 fontWeight="bold"
                 fontFamily="monospace"
                 fill={c.label}
@@ -208,12 +216,12 @@ export default function CircuitRenderer({ operations = [], initialState = '|0>' 
           return (
             <line
               key={qi}
-              x1={svgW - RIGHT_PAD + 8}
-              y1={y - 8}
-              x2={svgW - RIGHT_PAD + 8}
-              y2={y + 8}
+              x1={svgW - RIGHT_PAD + 12}
+              y1={y - 10}
+              x2={svgW - RIGHT_PAD + 12}
+              y2={y + 10}
               stroke="var(--diagram-endcap)"
-              strokeWidth="2"
+              strokeWidth="2.5"
             />
           )
         })}
@@ -221,3 +229,4 @@ export default function CircuitRenderer({ operations = [], initialState = '|0>' 
     </div>
   )
 }
+

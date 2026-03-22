@@ -87,13 +87,14 @@ export default function Header({ isFullscreen, onToggleFullscreen, theme, onTogg
 
   return (
     <header className="app-topbar">
-      <button className="app-topbar-brand" onClick={() => navigate('/')}>
-        <span className="app-topbar-brand-mark">
-          <img src={brandLogo} alt={BRAND_NAME} className="app-topbar-brand-image" />
-        </span>
-        <span className="app-topbar-brand-copy">
-          <span className="app-topbar-brand-name">{BRAND_NAME}</span>
-          <span className="app-topbar-brand-subtitle">{PRODUCT_NAME}</span>
+      <button 
+        className="app-topbar-brand" 
+        onClick={() => navigate('/')}
+        style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '2px', padding: '0 8px' }}
+      >
+        <img src={brandLogo} alt={BRAND_NAME} className="app-topbar-brand-image" />
+        <span className="app-topbar-brand-subtitle" style={{ fontSize: '15px', fontWeight: 600, color: 'var(--text-secondary)', letterSpacing: '0.02em' }}>
+          {PRODUCT_NAME}
         </span>
       </button>
 

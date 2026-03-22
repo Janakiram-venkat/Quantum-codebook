@@ -47,12 +47,12 @@ export default function Home() {
   return (
     <div className="px-5 py-8 md:px-8 md:py-10" style={{ maxWidth: 980, margin: '0 auto' }}>
       <header className="page-header-card" style={{ marginBottom: 28 }}>
-        <img src={brandLogo} alt={BRAND_NAME} style={{ height: 36, marginBottom: 28, objectFit: 'contain' }} />
+        <img src={brandLogo} alt={BRAND_NAME} className="home-brand-image" />
         <p className="section-eyebrow" style={{ marginBottom: 10 }}>
           Quantum Learning
         </p>
-        <h1 style={{ fontSize: 'clamp(2rem, 4vw, 2.8rem)', fontWeight: 700, color: 'var(--text-primary)', letterSpacing: '-0.04em', marginBottom: 12, lineHeight: 1.05 }}>
-          Welcome to {PRODUCT_NAME}
+        <h1 className="text-3xl md:text-5xl font-bold tracking-tight mb-4" style={{ color: 'var(--text-primary)' }}>
+          Welcome to Quantum Codebook
         </h1>
         <p style={{ fontSize: 16, color: 'var(--text-secondary)', lineHeight: 1.8, maxWidth: 700 }}>
           Structured learning path from fundamentals to research with interactive simulations.

@@ -94,7 +94,7 @@ export default function Track() {
         </div>
           <div>
             <p className="section-eyebrow" style={{ marginBottom: 6 }}>Learning Path</p>
-            <h1 className="text-2xl font-bold" style={{ color: 'var(--text-primary)', letterSpacing: '-0.03em' }}>
+            <h1 className="text-[30px] md:text-[34px] font-bold" style={{ color: 'var(--text-primary)', letterSpacing: '-0.03em' }}>
               {meta.label} Track
             </h1>
           </div>

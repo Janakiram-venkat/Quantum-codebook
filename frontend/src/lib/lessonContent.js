@@ -21,7 +21,12 @@ function renderParagraph(value) {
 }
 
 function renderList(items) {
-  const lines = asArray(items).map(item => `- ${escapeMdxText(item)}`.trim())
+  const lines = asArray(items).map(item => {
+    if (isFormulaCandidate(item)) {
+       return `- <MathText value={${quoteMdxProp(item)}} />`
+    }
+    return `- ${escapeMdxText(item)}`
+  })
   return lines.length > 0 ? lines.join('\n') : ''
 }
 
@@ -72,10 +77,17 @@ function isFormulaCandidate(value) {
 
   if (/[.!?]$/.test(text.trim())) return false
 
+  // Prevent full english prose lines from being flagged strictly as formulas
+  const words = text.split(/\s+/)
+  const proseWords = words.filter(w => /^[a-zA-Z]{2,}[,.:;!?]?$/.test(w))
+  if (proseWords.length >= 4) return false
+
   return (
     /[=αβγδψΦΨθφ√⟨⟩₀₁|^]/u.test(text) ||
     text.includes('→') ||
-    text.includes('⊗')
+    text.includes('⊗') ||
+    text.includes('[[') ||
+    /^\s*O\(.*\)\s*$/.test(text)
   )
 }
 

@@ -4,11 +4,11 @@
   "level": "beginner",
 
   "theory": {
-    "introduction": "Quantum gates are operations that change the state of a qubit. Just like classical logic gates (AND, NOT) manipulate bits, quantum gates manipulate qubits. However, unlike classical gates, quantum gates are reversible and operate using linear algebra.",
+    "introduction": "Quantum gates are operations that change the state of a qubit. Just like classical logic gates (AND, NOT) manipulate bits, quantum gates manipulate qubits. However, unlike classical gates, quantum gates are strictly reversible and operate linearly through complex matrices, preserving the fundamental quantum information embedded within.",
 
-    "start_from_zero": "Think of a qubit as a point representing probabilities. Quantum gates are like transformations that move this point around. Instead of flipping between 0 and 1 directly, gates rotate or transform the state in a continuous way.",
+    "start_from_zero": "Think of a qubit as a coordinate point traversing the surface of a 3D globe (the Bloch Sphere). Quantum gates act as physical transformations that rotate this point along different axes. Instead of harshly snapping between 0 and 1, gates glide the state in a smooth, continuous mathematical space.",
 
-    "why_it_matters": "Quantum gates are the building blocks of quantum circuits. By combining them, we can create complex behaviors like superposition, interference, and entanglement — which are essential for quantum algorithms.",
+    "why_it_matters": "They are the fundamental atomic units of all quantum computation. Masterfully sequencing these basic X, Y, Z, and H rotations is what ultimately generates superposition, structural interference, and entanglement—the core phenomena responsible for quantum speedup.",
 
     "core_idea": "A quantum gate is a mathematical operation represented by a matrix. When applied, it multiplies with the qubit state vector and produces a new quantum state.",
 

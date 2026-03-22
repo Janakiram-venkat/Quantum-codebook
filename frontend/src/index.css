@@ -232,7 +232,7 @@ html {
 body {
   font-family: var(--font-sans);
   font-size: 16px;
-  line-height: 1.65;
+  line-height: 1.8;
   letter-spacing: 0;
   background:
     radial-gradient(circle at top left, var(--body-radial-a), transparent 26%),
@@ -313,15 +313,27 @@ body {
 }
 
 .app-topbar-brand-image {
-  width: 30px;
-  height: 30px;
+  width: 120px;
+  height: auto;
   object-fit: contain;
-  filter: drop-shadow(0 0 0.4rem rgba(0, 0, 0, 0.25));
-  transition: filter 0.25s ease, transform 0.25s ease;
+  filter: invert(1);
+  transition: filter 0.25s ease;
 }
 
 :root[data-theme='dark'] .app-topbar-brand-image {
-  filter: drop-shadow(0 0 0.4rem rgba(255, 255, 255, 0.35));
+  filter: invert(0);
+}
+
+.home-brand-image {
+  height: 60px;
+  margin-bottom: 24px;
+  object-fit: contain;
+  filter: invert(1);
+  transition: filter 0.25s ease;
+}
+
+:root[data-theme='dark'] .home-brand-image {
+  filter: invert(0);
 }
 
 .app-topbar-brand-copy {
@@ -669,17 +681,18 @@ a {
 
 .section-title {
   margin: 0;
-  font-size: clamp(1.3rem, 2vw, 1.6rem);
+  font-size: clamp(1.6rem, 2.5vw, 1.95rem);
   font-weight: 700;
   letter-spacing: -0.03em;
-  line-height: 1.2;
+  line-height: 1.25;
   color: var(--text-primary);
 }
 
 .section-subtitle {
-  margin: 10px 0 0;
+  margin: 12px 0 0;
   color: var(--text-secondary);
-  line-height: 1.75;
+  font-size: 20px;
+  line-height: 1.8;
 }
 
 .soft-badge {
@@ -725,13 +738,13 @@ a {
   background: var(--surface-soft);
   border: 1px solid var(--border);
   border-radius: 18px;
-  padding: 16px 18px;
+  padding: 24px 28px;
 }
 
 .value-label {
   display: block;
-  margin-bottom: 8px;
-  font-size: 11px;
+  margin-bottom: 12px;
+  font-size: 15px;
   font-weight: 700;
   letter-spacing: 0.16em;
   text-transform: uppercase;
@@ -740,13 +753,14 @@ a {
 
 .value-copy {
   color: var(--text-secondary);
-  line-height: 1.75;
+  font-size: 19px;
+  line-height: 1.85;
 }
 
 .lesson-prose {
   color: var(--text-secondary);
-  font-size: 15px;
-  line-height: 1.85;
+  font-size: 20px;
+  line-height: 1.95;
 }
 
 .lesson-prose > :first-child {
@@ -768,20 +782,20 @@ a {
 
 .lesson-prose h1,
 .lesson-prose h2 {
-  margin: 32px 0 12px;
-  padding-top: 28px;
+  margin: 40px 0 16px;
+  padding-top: 32px;
   border-top: 1px solid var(--rule);
-  font-size: clamp(1.2rem, 2vw, 1.45rem);
+  font-size: clamp(30px, 4vw, 36px);
 }
 
 .lesson-prose h3 {
-  margin: 22px 0 10px;
-  font-size: 1.08rem;
+  margin: 28px 0 12px;
+  font-size: 1.6rem;
 }
 
 .lesson-prose h4 {
-  margin: 18px 0 8px;
-  font-size: 1rem;
+  margin: 24px 0 8px;
+  font-size: 1.3rem;
 }
 
 .lesson-prose p,

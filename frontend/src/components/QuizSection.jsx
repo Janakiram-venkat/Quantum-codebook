@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { CheckCircle, XCircle, RotateCcw, Trophy } from 'lucide-react'
 import { normalizeQuantumText } from '../lib/quantumText.js'
+import MathText from './MathText'
 
 function optionStyle({ isSelected, isSubmitted, isCorrectOpt, isWrongOpt }) {
   if (isCorrectOpt && isSubmitted) {
@@ -62,12 +63,30 @@ export default function QuizSection({ quiz }) {
   const allAnswered = Object.keys(answers).length === total
   const perfect = score === total
 
+  function isFormulaLike(str) {
+    if (!str) return false
+    const s = str.trim()
+    return (
+      (s.startsWith('|') && (s.includes('⟩') || s.includes('>'))) ||
+      (s.includes('(') && s.includes(') /')) ||
+      s.includes('√') ||
+      s.includes('⊗') ||
+      s.includes('[[') ||
+      /^O\(.*?\)$/.test(s) ||
+      /^[\d\+\-\*\/\(\)\s\.\^\_]+$/.test(s)
+    )
+  }
+
   function renderQuizText(value) {
-    return normalizeQuantumText(value)
+    const norm = normalizeQuantumText(value)
+    if (isFormulaLike(norm)) {
+      return <MathText value={norm} />
+    }
+    return norm
   }
 
   return (
-    <div className="space-y-7">
+    <div className="space-y-10">
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div className="section-heading">
           <p className="section-eyebrow">Review</p>
@@ -80,7 +99,7 @@ export default function QuizSection({ quiz }) {
         {submitted && (
           <button
             onClick={reset}
-            className="flex items-center gap-2 text-sm px-3.5 py-2 rounded-xl transition-all"
+            className="flex items-center gap-2 text-base px-4 py-2.5 rounded-xl transition-all"
             style={{
               background: 'var(--surface-soft)',
               border: '1px solid var(--border)',
@@ -116,7 +135,7 @@ export default function QuizSection({ quiz }) {
         </div>
       )}
 
-      <div className="space-y-6">
+      <div className="space-y-16">
         {quiz.map((q, qi) => {
           const selected = answers[qi]
           const isCorrect = submitted && selected === q.answer
@@ -125,17 +144,17 @@ export default function QuizSection({ quiz }) {
           return (
             <section
               key={qi}
-              className={qi > 0 ? 'pt-6' : ''}
+              className={qi > 0 ? 'pt-12' : ''}
               style={qi > 0 ? { borderTop: '1px solid var(--rule)' } : undefined}
             >
-              <div className="mb-4">
+              <div className="mb-8">
                 <p
-                  className="text-[11px] font-semibold uppercase mb-2"
+                  className="text-[14px] font-bold uppercase mb-3"
                   style={{ color: 'var(--text-muted)', letterSpacing: '0.16em' }}
                 >
                   Question {qi + 1}
                 </p>
-                <p className="text-base font-medium" style={{ color: 'var(--text-primary)', lineHeight: 1.75 }}>
+                <p className="text-[19px] font-medium" style={{ color: 'var(--text-primary)', lineHeight: 1.8 }}>
                   {renderQuizText(q.question)}
                 </p>
                 {submitted && (
@@ -152,7 +171,7 @@ export default function QuizSection({ quiz }) {
                 )}
               </div>
 
-              <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-2">
+              <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
                 {q.options.map(opt => {
                   const isSelected = selected === opt
                   const isCorrectOpt = submitted && opt === q.answer
@@ -162,7 +181,7 @@ export default function QuizSection({ quiz }) {
                     <button
                       key={opt}
                       onClick={() => pickAnswer(qi, opt)}
-                      className="text-left px-4 py-3 rounded-xl text-sm transition-all duration-150 w-full flex items-center gap-2.5"
+                      className="text-left px-8 py-6 rounded-2xl text-[18px] transition-all duration-150 w-full flex items-center gap-4"
                       style={{
                         ...optionStyle({ isSelected, isSubmitted: submitted, isCorrectOpt, isWrongOpt }),
                         cursor: submitted ? 'default' : 'pointer',

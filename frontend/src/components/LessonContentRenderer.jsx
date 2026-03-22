@@ -62,6 +62,7 @@ const mdxComponents = {
   GateSequence,
   Callout,
   table: TableWrapper,
+  MathText,
 }
 
 export default function LessonContentRenderer({ source }) {

@@ -4,7 +4,7 @@
   "level": "intermediate",
 
   "theory": {
-    "introduction": "Quantum Fourier Transform (QFT) is the quantum analogue of the classical discrete Fourier transform. It transforms a quantum state into a phase-based representation, enabling efficient solutions to problems involving periodicity, frequency estimation, and hidden structure in data.",
+    "introduction": "The Quantum Fourier Transform (QFT) is the incredibly profound quantum analogue of the classical discrete Fourier transform. It maps a quantum state into a continuous phase-based representation, essentially allowing a quantum computer to efficiently isolate periodicity, uncover hidden eigenvalue structures in massively entangled datasets, and perform frequency estimation far beyond classical limits.",
 
     "key_points": [
       "QFT transforms amplitudes into phase information",
@@ -25,7 +25,7 @@
     },
 
     "intuition": {
-      "description": "QFT extracts periodic structure from quantum states. Instead of analyzing signals directly, QFT encodes frequency information into quantum phases.",
+      "description": "QFT essentially isolates global harmonic structures embedded deeply inside immense state-vectors. Instead of analyzing classical signal graphs pointwise, QFT rapidly encodes precise frequency and periodicity data holistically into quantum phases.",
       
       "comparison_classical": {
         "classical_fft": "Requires O(N log N) operations",

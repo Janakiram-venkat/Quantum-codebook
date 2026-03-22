@@ -118,7 +118,7 @@ function getLabelPlacement(point, text) {
   const dx = point.x - CENTER
   const dy = point.y - CENTER
   const length = Math.hypot(dx, dy) || 1
-  const offset = 16
+  const offset = 22
   const x = point.x + (dx / length) * offset
   const y = point.y + (dy / length) * offset
 
@@ -157,10 +157,10 @@ function AxisLabel({ label }) {
       y={label.y}
       textAnchor={label.anchor}
       dominantBaseline="middle"
-      fontSize="12"
-      fontWeight="600"
+      fontSize="16"
+      fontWeight="700"
       fill="var(--bloch-axis-label)"
-      opacity={label.depth >= 0 ? 0.98 : 0.62}
+      opacity={label.depth >= 0 ? 0.98 : 0.65}
       pointerEvents="none"
     >
       {label.text}
@@ -313,16 +313,19 @@ export default function BlochSphere({ state, sourceLabel, stateLabel, note }) {
           </button>
         </div>
 
-        <svg
-          viewBox={`0 0 ${VIEWBOX_SIZE} ${VIEWBOX_SIZE}`}
-          style={{
-            width: '100%',
-            height: 'auto',
-            display: 'block',
-            cursor: isDragging ? 'grabbing' : 'grab',
-            touchAction: 'none',
-            outline: 'none',
-          }}
+        <div className="w-full flex justify-center py-6">
+          <svg
+            viewBox={`0 0 ${VIEWBOX_SIZE} ${VIEWBOX_SIZE}`}
+            style={{
+              maxWidth: '430px',
+              margin: '0 auto',
+              width: '100%',
+              height: 'auto',
+              display: 'block',
+              cursor: isDragging ? 'grabbing' : 'grab',
+              touchAction: 'none',
+              outline: 'none',
+            }}
           tabIndex={0}
           role="img"
           aria-label="Interactive 3D Bloch sphere"
@@ -347,12 +350,12 @@ export default function BlochSphere({ state, sourceLabel, stateLabel, note }) {
 
           <circle cx={CENTER} cy={CENTER} r={RADIUS + 15} fill={`url(#${ids.glow})`} opacity="0.78" />
 
-          <path d={zCircle.backPath} fill="none" stroke="var(--bloch-circle-z)" strokeWidth="1.1" opacity="0.32" />
-          <path d={xCircle.backPath} fill="none" stroke="var(--bloch-circle-x)" strokeWidth="1.05" strokeDasharray="4 5" opacity="0.3" />
-          <path d={yCircle.backPath} fill="none" stroke="var(--bloch-circle-y)" strokeWidth="1.05" strokeDasharray="5 6" opacity="0.3" />
-          <path d={xAxis.backPath} fill="none" stroke="var(--bloch-axis-x)" strokeWidth="1.25" opacity="0.26" />
-          <path d={yAxis.backPath} fill="none" stroke="var(--bloch-axis-y)" strokeWidth="1.25" opacity="0.26" />
-          <path d={zAxis.backPath} fill="none" stroke="var(--bloch-axis-z)" strokeWidth="1.25" opacity="0.28" />
+          <path d={zCircle.backPath} fill="none" stroke="var(--bloch-circle-z)" strokeWidth="1.1" opacity="0.45" />
+          <path d={xCircle.backPath} fill="none" stroke="var(--bloch-circle-x)" strokeWidth="1.05" strokeDasharray="4 5" opacity="0.4" />
+          <path d={yCircle.backPath} fill="none" stroke="var(--bloch-circle-y)" strokeWidth="1.05" strokeDasharray="5 6" opacity="0.4" />
+          <path d={xAxis.backPath} fill="none" stroke="var(--bloch-axis-x)" strokeWidth="1.25" opacity="0.45" />
+          <path d={yAxis.backPath} fill="none" stroke="var(--bloch-axis-y)" strokeWidth="1.25" opacity="0.45" />
+          <path d={zAxis.backPath} fill="none" stroke="var(--bloch-axis-z)" strokeWidth="1.25" opacity="0.45" />
 
           <circle
             cx={CENTER}
@@ -404,25 +407,26 @@ export default function BlochSphere({ state, sourceLabel, stateLabel, note }) {
           {labels.map(label => (
             <AxisLabel key={label.text} label={label} />
           ))}
-        </svg>
+          </svg>
+        </div>
       </div>
 
       <div className="space-y-4">
         <div className="value-card">
           <span className="value-label">State View</span>
-          <p style={{ margin: 0, fontSize: 15, fontWeight: 600, color: 'var(--text-primary)' }}>
+          <p style={{ margin: 0, fontSize: 18, fontWeight: 600, color: 'var(--text-primary)' }}>
             {sourceLabel || 'Single-qubit state'}
           </p>
           {normalizedStateLabel && (
             <p
-              className="font-mono text-sm"
+              className="font-mono text-[16px]"
               style={{ marginTop: 10, color: 'var(--text-secondary)', lineHeight: 1.7 }}
             >
               {normalizedStateLabel}
             </p>
           )}
           {note && (
-            <p className="text-sm mt-3" style={{ color: 'var(--text-muted)', lineHeight: 1.7 }}>
+            <p className="text-[17px] mt-3" style={{ color: 'var(--text-muted)', lineHeight: 1.7 }}>
               {note}
             </p>
           )}
@@ -431,34 +435,34 @@ export default function BlochSphere({ state, sourceLabel, stateLabel, note }) {
         <div className="section-grid" data-columns="2">
           <div className="value-card">
             <span className="value-label">Alpha</span>
-            <p className="font-mono" style={{ margin: 0, fontSize: 14, color: 'var(--text-primary)' }}>
+            <p className="font-mono" style={{ margin: 0, fontSize: 18, color: 'var(--text-primary)' }}>
               {formatComplex(state.alpha)}
             </p>
           </div>
           <div className="value-card">
             <span className="value-label">Beta</span>
-            <p className="font-mono" style={{ margin: 0, fontSize: 14, color: 'var(--text-primary)' }}>
+            <p className="font-mono" style={{ margin: 0, fontSize: 18, color: 'var(--text-primary)' }}>
               {formatComplex(state.beta)}
             </p>
           </div>
           <div className="value-card">
             <span className="value-label">Bloch Vector</span>
-            <p className="font-mono" style={{ margin: 0, fontSize: 14, color: 'var(--text-primary)' }}>
+            <p className="font-mono" style={{ margin: 0, fontSize: 17, color: 'var(--text-primary)' }}>
               x {formatNumber(vector.x)}
             </p>
-            <p className="font-mono text-sm" style={{ marginTop: 6, color: 'var(--text-secondary)' }}>
+            <p className="font-mono text-[16px]" style={{ marginTop: 6, color: 'var(--text-secondary)' }}>
               y {formatNumber(vector.y)}
             </p>
-            <p className="font-mono text-sm" style={{ marginTop: 6, color: 'var(--text-secondary)' }}>
+            <p className="font-mono text-[16px]" style={{ marginTop: 6, color: 'var(--text-secondary)' }}>
               z {formatNumber(vector.z)}
             </p>
           </div>
           <div className="value-card">
             <span className="value-label">Angles</span>
-            <p className="font-mono" style={{ margin: 0, fontSize: 14, color: 'var(--text-primary)' }}>
+            <p className="font-mono" style={{ margin: 0, fontSize: 17, color: 'var(--text-primary)' }}>
               theta {formatDegrees(vector.theta)}
             </p>
-            <p className="font-mono text-sm" style={{ marginTop: 6, color: 'var(--text-secondary)' }}>
+            <p className="font-mono text-[16px]" style={{ marginTop: 6, color: 'var(--text-secondary)' }}>
               phi {formatDegrees(vector.phi)}
             </p>
           </div>

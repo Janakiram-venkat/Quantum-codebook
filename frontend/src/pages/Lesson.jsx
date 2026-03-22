@@ -54,6 +54,12 @@ export default function Lesson() {
     data?.summary ||
     'Read the lesson, inspect the circuit, and review the core ideas step by step.'
 
+  const steps = [
+    { label: 'Theory', id: 'theory-heading', present: true },
+    { label: 'Interactive Lab', id: 'simulation-heading', present: hasSimulation },
+    { label: 'Quiz', id: 'quiz-heading', present: hasQuiz },
+  ].filter(s => s.present)
+
   return (
     <article className="px-2 py-6 md:px-4 md:py-10">
       {loading && (
@@ -79,16 +85,16 @@ export default function Lesson() {
 
       {data && (
         <>
-          <header className="page-header-card" style={{ marginBottom: 24 }}>
+          <header className="page-header-card" style={{ marginBottom: 32 }}>
             <h1
-              className="text-4xl md:text-5xl font-semibold mb-4"
-              style={{ color: 'var(--text-primary)', letterSpacing: '-0.05em', lineHeight: 1.02 }}
+              className="text-[34px] md:text-[40px] font-bold mb-5"
+              style={{ color: 'var(--text-primary)', letterSpacing: '-0.04em', lineHeight: 1.15 }}
             >
               {data.title}
             </h1>
             <p
-              className="text-base md:text-[17px] max-w-3xl"
-              style={{ color: 'var(--text-secondary)', lineHeight: 1.8 }}
+              className="text-lg md:text-xl max-w-3xl"
+              style={{ color: 'var(--text-secondary)', lineHeight: 1.85 }}
             >
               {lessonSummary}
             </p>

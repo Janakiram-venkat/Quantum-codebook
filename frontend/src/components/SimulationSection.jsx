@@ -42,7 +42,7 @@ function secondaryButtonStyle() {
 
 function isFormulaLike(value) {
   const text = normalizeQuantumText(value)
-  return /[=αβγδψΦΨθφ√⟨⟩₀₁|^]/u.test(text) || text.includes('→') || text.includes('⊗')
+  return /[=αβγδψΦΨθφ√⟨⟩₀₁|^\[\]]/u.test(text) || text.includes('→') || text.includes('⊗')
 }
 
 function StatePill({ value }) {
@@ -50,7 +50,7 @@ function StatePill({ value }) {
 
   return (
     <span
-      className="font-mono text-sm px-3 py-1.5 rounded-full"
+      className="font-mono text-base px-4 py-2 rounded-full"
       style={{
         background: 'var(--surface-soft)',
         border: '1px solid var(--border)',
@@ -103,11 +103,11 @@ function AmplitudeGrid({ amplitudes }) {
           <span className="value-label">{`|${state}> amplitude`}</span>
           <p
             className="font-mono"
-            style={{ margin: 0, fontSize: 15, fontWeight: 600, color: 'var(--text-primary)' }}
+            style={{ margin: 0, fontSize: 17, fontWeight: 600, color: 'var(--text-primary)' }}
           >
             {formatAmplitude(amplitude)}
           </p>
-          <p className="text-sm mt-2" style={{ color: 'var(--text-secondary)', lineHeight: 1.7 }}>
+          <p className="text-base mt-2" style={{ color: 'var(--text-secondary)', lineHeight: 1.7 }}>
             Probability {(amplitudeProbability(amplitude) * 100).toFixed(1)}%
           </p>
         </div>
@@ -121,6 +121,8 @@ export default function SimulationSection({ topic, simulation, theory }) {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
   const [ran, setRan] = useState(false)
+  const [activeStep, setActiveStep] = useState(null)
+  const [isAnimating, setIsAnimating] = useState(false)
 
   const ops = simulation?.operations || []
   const hasOps = ops.length > 0
@@ -130,13 +132,35 @@ export default function SimulationSection({ topic, simulation, theory }) {
     setRan(false)
     setResult(null)
     setError(null)
+    setActiveStep(null)
+    setIsAnimating(false)
     try {
       const res = await axios.get(`/api/simulate/${encodeURIComponent(topic)}`)
-      setResult(res.data)
-      setRan(true)
+      setLoading(false)
+      
+      if (ops.length > 0) {
+        setIsAnimating(true)
+        let currentStep = 0
+        setActiveStep(0)
+        
+        const timer = setInterval(() => {
+          currentStep++
+          if (currentStep >= ops.length) {
+            clearInterval(timer)
+            setActiveStep(null)
+            setIsAnimating(false)
+            setResult(res.data)
+            setRan(true)
+          } else {
+            setActiveStep(currentStep)
+          }
+        }, 550)
+      } else {
+        setResult(res.data)
+        setRan(true)
+      }
     } catch (e) {
       setError(e?.response?.data?.detail || 'Simulation failed. Is the backend running?')
-    } finally {
       setLoading(false)
     }
   }
@@ -145,6 +169,8 @@ export default function SimulationSection({ topic, simulation, theory }) {
     setResult(null)
     setRan(false)
     setError(null)
+    setActiveStep(null)
+    setIsAnimating(false)
   }
 
   const shots = 1000
@@ -214,12 +240,12 @@ export default function SimulationSection({ topic, simulation, theory }) {
             )}
             <button
               onClick={runSim}
-              disabled={loading}
+              disabled={loading || isAnimating}
               className="w-full sm:w-auto"
-              style={primaryButtonStyle(loading)}
+              style={primaryButtonStyle(loading || isAnimating)}
             >
-              {loading ? <Loader2 size={14} className="animate-spin" /> : <Play size={14} />}
-              {loading ? 'Running...' : ran ? 'Run again' : 'Run simulation'}
+              {loading || isAnimating ? <Loader2 size={14} className="animate-spin" /> : <Play size={14} />}
+              {loading ? 'Fetching...' : isAnimating ? 'Simulating...' : ran ? 'Run again' : 'Run simulation'}
             </button>
           </div>
         )}
@@ -248,23 +274,24 @@ export default function SimulationSection({ topic, simulation, theory }) {
       <div
         className="soft-panel p-4 md:p-5"
       >
-        <header className="mb-4">
-          <p className="section-eyebrow" style={{ marginBottom: 6 }}>Circuit View</p>
-          <h3 className="text-lg font-semibold" style={{ color: 'var(--text-primary)', letterSpacing: '-0.02em' }}>
+        <header className="mb-5">
+          <p className="section-eyebrow" style={{ marginBottom: 8 }}>Circuit View</p>
+          <h3 className="text-xl md:text-2xl font-bold" style={{ color: 'var(--text-primary)', letterSpacing: '-0.02em' }}>
             Gate layout
           </h3>
         </header>
         <CircuitRenderer
           operations={ops}
           initialState={simulation?.initial_state || '|0>'}
+          activeStep={activeStep}
         />
       </div>
 
       {showBlochSphere && (
         <div className="soft-panel p-4 md:p-5">
-          <header className="mb-4">
-            <p className="section-eyebrow" style={{ marginBottom: 6 }}>Bloch Sphere</p>
-            <h3 className="text-lg font-semibold" style={{ color: 'var(--text-primary)', letterSpacing: '-0.02em' }}>
+          <header className="mb-5">
+            <p className="section-eyebrow" style={{ marginBottom: 8 }}>Bloch Sphere</p>
+            <h3 className="text-xl md:text-2xl font-bold" style={{ color: 'var(--text-primary)', letterSpacing: '-0.02em' }}>
               Single-qubit state view
             </h3>
           </header>
@@ -304,11 +331,11 @@ export default function SimulationSection({ topic, simulation, theory }) {
         <div
           className="soft-panel p-4 md:p-5"
         >
-          <header className="mb-4">
-            <p className="section-eyebrow" style={{ marginBottom: 6 }}>
+          <header className="mb-5">
+            <p className="section-eyebrow" style={{ marginBottom: 8 }}>
               {hasMeasurementData ? 'Measurement output' : 'State analysis'}
             </p>
-            <h3 className="text-lg font-semibold" style={{ color: 'var(--text-primary)', letterSpacing: '-0.02em' }}>
+            <h3 className="text-xl md:text-2xl font-bold" style={{ color: 'var(--text-primary)', letterSpacing: '-0.02em' }}>
               {resultTitle}
             </h3>
           </header>
@@ -318,9 +345,9 @@ export default function SimulationSection({ topic, simulation, theory }) {
 
       {ran && hasAmplitudeData && (
         <div className="soft-panel p-4 md:p-5">
-          <header className="mb-4">
-            <p className="section-eyebrow" style={{ marginBottom: 6 }}>Statevector output</p>
-            <h3 className="text-lg font-semibold" style={{ color: 'var(--text-primary)', letterSpacing: '-0.02em' }}>
+          <header className="mb-5">
+            <p className="section-eyebrow" style={{ marginBottom: 8 }}>Statevector output</p>
+            <h3 className="text-xl md:text-2xl font-bold" style={{ color: 'var(--text-primary)', letterSpacing: '-0.02em' }}>
               Basis amplitudes
             </h3>
           </header>
@@ -330,9 +357,9 @@ export default function SimulationSection({ topic, simulation, theory }) {
 
       {ran && !hasAmplitudeData && !hasMeasurementData && simulatorResult && (
         <div className="soft-panel p-4 md:p-5">
-          <header className="mb-3">
-            <p className="section-eyebrow" style={{ marginBottom: 6 }}>Raw result</p>
-            <h3 className="text-lg font-semibold" style={{ color: 'var(--text-primary)', letterSpacing: '-0.02em' }}>
+          <header className="mb-5">
+            <p className="section-eyebrow" style={{ marginBottom: 8 }}>Raw result</p>
+            <h3 className="text-xl md:text-2xl font-bold" style={{ color: 'var(--text-primary)', letterSpacing: '-0.02em' }}>
               Backend output
             </h3>
           </header>

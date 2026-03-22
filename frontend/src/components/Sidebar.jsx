@@ -21,8 +21,6 @@ const intermediateTopics = [
 
 const primaryLinks = [
   { to: '/', label: 'Welcome', icon: Home, end: true },
-  { to: '/track/begainner', label: 'Beginner Track', icon: Sparkles },
-  { to: '/track/intermidiate', label: 'Intermediate Track', icon: Sparkles },
 ]
 
 export default function Sidebar() {

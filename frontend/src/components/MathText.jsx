@@ -32,6 +32,16 @@ function normalizeToLatex(value) {
     text = text.split(from).join(to)
   })
 
+  // Matrices: convert [[a,b], [c,d]] into \begin{bmatrix} ... \end{bmatrix}
+  text = text.replace(/\[\s*\[(.*?)\]\s*\]/g, (match, inner) => {
+    const rows = inner.split(/\s*\]\s*,\s*\[\s*/)
+    const latexRows = rows.map(row => row.split(/\s*,\s*/).join(' & '))
+    return `\\begin{bmatrix} ${latexRows.join(' \\\\ ')} \\end{bmatrix}`
+  })
+
+  // Fractions: convert (A + B) / C into \frac{A}{C}
+  text = text.replace(/\(([^)]+)\)\s*\/\s*([^\s+=\-]+)/g, '\\frac{$1}{$2}')
+
   text = text.replace(/\|([^|]+?)\\rangle/g, '\\ket{$1}')
   text = text.replace(/\\langle([^|]+?)\|/g, '\\bra{$1}')
   text = text.replace(/\\Phi([+-])/g, '\\Phi^{$1}')
