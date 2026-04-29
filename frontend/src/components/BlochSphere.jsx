@@ -178,8 +178,11 @@ export default function BlochSphere({ state, sourceLabel, stateLabel, note }) {
     glow: `${baseId}-glow`,
   }
   const vector = getBlochVector(state)
+  const isVectorOnly = Boolean(state?.vector) && (!state?.alpha || !state?.beta)
 
   if (!state || !vector) return null
+
+  const purity = (1 + vector.x * vector.x + vector.y * vector.y + vector.z * vector.z) / 2
 
   const zCircle = buildGreatCircle('z', view.yaw, view.pitch)
   const xCircle = buildGreatCircle('x', view.yaw, view.pitch)
@@ -433,18 +436,22 @@ export default function BlochSphere({ state, sourceLabel, stateLabel, note }) {
         </div>
 
         <div className="section-grid" data-columns="2">
-          <div className="value-card">
-            <span className="value-label">Alpha</span>
-            <p className="font-mono" style={{ margin: 0, fontSize: 18, color: 'var(--text-primary)' }}>
-              {formatComplex(state.alpha)}
-            </p>
-          </div>
-          <div className="value-card">
-            <span className="value-label">Beta</span>
-            <p className="font-mono" style={{ margin: 0, fontSize: 18, color: 'var(--text-primary)' }}>
-              {formatComplex(state.beta)}
-            </p>
-          </div>
+          {!isVectorOnly && (
+            <div className="value-card">
+              <span className="value-label">Alpha</span>
+              <p className="font-mono" style={{ margin: 0, fontSize: 18, color: 'var(--text-primary)' }}>
+                {formatComplex(state.alpha)}
+              </p>
+            </div>
+          )}
+          {!isVectorOnly && (
+            <div className="value-card">
+              <span className="value-label">Beta</span>
+              <p className="font-mono" style={{ margin: 0, fontSize: 18, color: 'var(--text-primary)' }}>
+                {formatComplex(state.beta)}
+              </p>
+            </div>
+          )}
           <div className="value-card">
             <span className="value-label">Bloch Vector</span>
             <p className="font-mono" style={{ margin: 0, fontSize: 17, color: 'var(--text-primary)' }}>
@@ -458,13 +465,26 @@ export default function BlochSphere({ state, sourceLabel, stateLabel, note }) {
             </p>
           </div>
           <div className="value-card">
-            <span className="value-label">Angles</span>
-            <p className="font-mono" style={{ margin: 0, fontSize: 17, color: 'var(--text-primary)' }}>
-              theta {formatDegrees(vector.theta)}
-            </p>
-            <p className="font-mono text-[16px]" style={{ marginTop: 6, color: 'var(--text-secondary)' }}>
-              phi {formatDegrees(vector.phi)}
-            </p>
+            <span className="value-label">{isVectorOnly ? 'Mixed-State Info' : 'Angles'}</span>
+            {isVectorOnly ? (
+              <>
+                <p className="font-mono" style={{ margin: 0, fontSize: 17, color: 'var(--text-primary)' }}>
+                  length {formatNumber(vector.length || 0)}
+                </p>
+                <p className="font-mono text-[16px]" style={{ marginTop: 6, color: 'var(--text-secondary)' }}>
+                  purity {formatNumber(purity)}
+                </p>
+              </>
+            ) : (
+              <>
+                <p className="font-mono" style={{ margin: 0, fontSize: 17, color: 'var(--text-primary)' }}>
+                  theta {formatDegrees(vector.theta)}
+                </p>
+                <p className="font-mono text-[16px]" style={{ marginTop: 6, color: 'var(--text-secondary)' }}>
+                  phi {formatDegrees(vector.phi)}
+                </p>
+              </>
+            )}
           </div>
         </div>
       </div>

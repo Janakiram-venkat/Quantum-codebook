@@ -1,0 +1,188 @@
+{
+  "id": "qubits_states",
+  "title": "Qubits and Quantum States",
+  "level": "beginner",
+  "learning_objectives": [
+    "Understand what a qubit is",
+    "Learn difference between classical bit and qubit",
+    "Understand superposition concept",
+    "Understand probability amplitudes",
+    "Visualize qubit on Bloch sphere",
+    "Interpret alpha and beta values"
+  ],
+  "theory": {
+    "introduction": "A qubit (quantum bit) is the basic unit of quantum information. Unlike a classical bit which can only be 0 or 1, a qubit can exist in a combination of both states simultaneously.",
+    "why_it_matters": "Qubits allow quantum computers to explore many computational paths at once, enabling powerful algorithms such as Shor’s factoring algorithm and Grover’s search algorithm.",
+    "classical_vs_quantum": {
+      "classical": [
+        "Bit is either 0 or 1",
+        "Deterministic operations",
+        "State is always definite",
+        "Copying is allowed",
+        "Measurement does not change state"
+      ],
+      "quantum": [
+        "Qubit can exist in superposition",
+        "Operations can be probabilistic",
+        "State described using amplitudes",
+        "No-cloning theorem prevents copying",
+        "Measurement collapses state"
+      ]
+    },
+    "math": {
+      "state_vector": "|ψ⟩ = α|0⟩ + β|1⟩",
+      "normalization": "|α|² + |β|² = 1",
+      "measurement_probability": "P(0) = |α|² ,  P(1) = |β|²",
+      "bloch_representation": "|ψ⟩ = cos(θ/2)|0⟩ + e^{iφ} sin(θ/2)|1⟩",
+      "explanation": "α and β are complex probability amplitudes. Their squared magnitudes determine measurement probabilities."
+    },
+    "intuition": {
+      "coin": "Like a spinning coin that is neither heads nor tails until observed.",
+      "wave": "Quantum states behave like probability waves.",
+      "cloud": "The qubit represents a cloud of probabilities that collapses when measured."
+    },
+    "bloch_sphere": {
+      "description": "Bloch sphere visually represents qubit state.",
+      "points": [
+        "|0⟩ north pole",
+        "|1⟩ south pole",
+        "superpositions lie on surface",
+        "θ controls vertical position",
+        "φ controls rotation angle"
+      ]
+    }
+  },
+  "examples": [
+    {
+      "title": "Default state",
+      "description": "Qubit initialized to |0⟩",
+      "state_vector": [
+        1,
+        0
+      ],
+      "bloch_vector": [
+        0,
+        0,
+        1
+      ],
+      "probabilities": {
+        "0": 1,
+        "1": 0
+      }
+    },
+    {
+      "title": "Conceptual superposition",
+      "description": "Equal probability state",
+      "state_vector": [
+        0.707,
+        0.707
+      ],
+      "bloch_vector": [
+        1,
+        0,
+        0
+      ],
+      "probabilities": {
+        "0": 0.5,
+        "1": 0.5
+      },
+      "note": "Created using Hadamard gate (learn next lesson)"
+    }
+  ],
+  "common_mistakes": [
+    "Assuming qubit stores both 0 and 1 physically",
+    "Confusing probability amplitude with probability",
+    "Ignoring normalization rule",
+    "Thinking measurement reveals hidden classical value",
+    "Assuming qubits behave like probabilistic classical bits"
+  ],
+  "simulation": {
+    "type": "state_visualization",
+    "interactive": false,
+    "show_bloch_sphere": true,
+    "show_state_vector": true,
+    "show_probabilities": true,
+    "show_angles": true,
+    "initial_state": {
+      "label": "|0⟩",
+      "alpha": 1,
+      "beta": 0,
+      "bloch_vector": [
+        0,
+        0,
+        1
+      ],
+      "angles": {
+        "theta": 0,
+        "phi": 0
+      }
+    },
+    "visualization_panels": [
+      "bloch_sphere",
+      "state_vector",
+      "probability_bar",
+      "angle_display"
+    ],
+    "experiments": [
+      {
+        "name": "initial_state",
+        "description": "Observe qubit initialized to |0⟩",
+        "alpha": 1,
+        "beta": 0
+      },
+      {
+        "name": "concept_superposition",
+        "description": "Preview equal superposition",
+        "alpha": 0.707,
+        "beta": 0.707,
+        "bloch_vector": [
+          1,
+          0,
+          0
+        ]
+      }
+    ],
+    "stim_circuit": [
+      "M 0"
+    ]
+  },
+  "quiz": [
+    {
+      "difficulty": "easy",
+      "question": "What is a qubit?",
+      "options": [
+        "Classical bit",
+        "Quantum bit",
+        "Processor",
+        "Register"
+      ],
+      "answer": "Quantum bit",
+      "explanation": "Qubit is the basic unit of quantum information."
+    },
+    {
+      "difficulty": "easy",
+      "question": "What happens when we measure a qubit?",
+      "options": [
+        "State stays same",
+        "Collapses to definite state",
+        "Copies itself",
+        "Disappears"
+      ],
+      "answer": "Collapses to definite state",
+      "explanation": "Measurement collapses superposition into |0⟩ or |1⟩."
+    },
+    {
+      "difficulty": "medium",
+      "question": "What does |α|² represent?",
+      "options": [
+        "Energy",
+        "Probability of measuring |0⟩",
+        "Gate strength",
+        "Angle"
+      ],
+      "answer": "Probability of measuring |0⟩",
+      "explanation": "Square magnitude of amplitude gives probability."
+    }
+  ],
+  "next_lesson": "superposition"
+}

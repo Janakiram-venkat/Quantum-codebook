@@ -1,0 +1,188 @@
+{
+  "id": "grovers_algorithm",
+  "title": "Grover's Search Algorithm",
+  "level": "intermediate",
+  "theory": {
+    "introduction": "Grover's algorithm gives a quadratic speedup for unstructured search. Instead of checking candidates one by one, it uses interference to amplify the amplitude of the marked answer.",
+    "why_it_matters": "It is one of the cleanest examples of a quantum speedup that comes directly from phase and interference. The algorithm is simple enough to study step by step, but powerful enough to show why amplitude amplification matters.",
+    "core_idea": "Start in an equal superposition, mark the target with an oracle phase flip, then apply the diffusion operator to reflect amplitudes about their average. Repeating that pair of steps rotates the state toward the answer.",
+    "key_points": [
+      "Classical search over N items takes O(N) queries in the worst case.",
+      "Grover search finds a marked item in O(sqrt(N)) oracle calls.",
+      "The oracle changes phase, not probability, on the target state.",
+      "The diffusion operator turns that hidden phase difference into a probability boost.",
+      "Too many Grover iterations overshoot the answer, so the count matters."
+    ]
+  },
+  "algorithm_structure": {
+    "components": {
+      "superposition": {
+        "description": "Apply Hadamard gates so every basis state starts with the same amplitude."
+      },
+      "oracle": {
+        "description": "Flip the phase of the marked state and leave the others unchanged.",
+        "notation": "U_w |x> = -|x> for the marked state."
+      },
+      "diffusion_operator": {
+        "description": "Reflect every amplitude about the mean so the marked state grows while the others shrink."
+      }
+    },
+    "steps": [
+      {
+        "step": 1,
+        "description": "Initialize the register in |00...0>."
+      },
+      {
+        "step": 2,
+        "description": "Apply Hadamards to create equal superposition."
+      },
+      {
+        "step": 3,
+        "description": "Use the oracle to mark the target state with a phase flip."
+      },
+      {
+        "step": 4,
+        "description": "Apply the diffusion operator to reflect amplitudes about their average."
+      },
+      {
+        "step": 5,
+        "description": "Repeat oracle plus diffusion about sqrt(N) times."
+      },
+      {
+        "step": 6,
+        "description": "Measure the register to read out the marked item."
+      }
+    ]
+  },
+  "mathematical_representation": {
+    "initial_state": "|psi> = (1 / sqrt(N)) sum_x |x>",
+    "diffusion_formula": "D = 2 |psi><psi| - I",
+    "iteration_count": "Optimal iteration count is about (pi / 4) * sqrt(N)."
+  },
+  "circuit_examples": [
+    {
+      "name": "2-Qubit Search",
+      "description": "Search over four candidate states and mark |11>.",
+      "circuit": [
+        { "gate": "H", "target": 0 },
+        { "gate": "H", "target": 1 },
+        { "gate": "CZ", "control": 0, "target": 1 },
+        { "gate": "H", "target": 0 },
+        { "gate": "H", "target": 1 },
+        { "gate": "X", "target": 0 },
+        { "gate": "X", "target": 1 },
+        { "gate": "CZ", "control": 0, "target": 1 },
+        { "gate": "X", "target": 0 },
+        { "gate": "X", "target": 1 },
+        { "gate": "H", "target": 0 },
+        { "gate": "H", "target": 1 }
+      ],
+      "expected_result": "After one iteration, the target state |11> has almost all of the probability mass."
+    },
+    {
+      "name": "Amplitude Story",
+      "description": "The target starts at 25 percent, gets phase-marked, then jumps to full probability after one diffusion step.",
+      "probability_growth": [
+        { "iteration": 0, "probability_target": 0.25 },
+        { "iteration": 1, "probability_target": 1.0 }
+      ]
+    }
+  ],
+  "applications": [
+    "Unstructured search",
+    "Constraint satisfaction",
+    "Brute-force style optimization",
+    "Cryptanalysis and key search"
+  ],
+  "advantages": [
+    "Clear quadratic speedup",
+    "Compact conceptual structure",
+    "Shows how phase becomes probability through interference"
+  ],
+  "limitations": [
+    "Needs an oracle for the problem instance",
+    "Only gives quadratic, not exponential, speedup",
+    "Requires a good estimate of the number of marked states"
+  ],
+  "summary": "Grover's algorithm turns a hidden phase mark into an observable probability boost. It is a classic example of quantum amplitude amplification in action.",
+  "difficulty": "medium",
+  "estimated_time": "30-40 minutes",
+  "prerequisites": [
+    "Superposition",
+    "Multi-Qubit Systems",
+    "Controlled Gates",
+    "Phase Intuition"
+  ],
+  "simulation": {
+    "type": "grover_explorer",
+    "section_title": "Amplitude amplification lab",
+    "section_subtitle": "Watch the oracle flip the target phase and the diffusion operator reflect amplitudes about their mean.",
+    "initial_state": "|00>",
+    "operations": [
+      { "gate": "H", "target": 0 },
+      { "gate": "H", "target": 1 },
+      { "gate": "CZ", "control": 0, "target": 1 },
+      { "gate": "H", "target": 0 },
+      { "gate": "H", "target": 1 },
+      { "gate": "X", "target": 0 },
+      { "gate": "X", "target": 1 },
+      { "gate": "CZ", "control": 0, "target": 1 },
+      { "gate": "X", "target": 0 },
+      { "gate": "X", "target": 1 },
+      { "gate": "H", "target": 0 },
+      { "gate": "H", "target": 1 }
+    ],
+    "expected_result": "Target state |11> amplified after one Grover iteration.",
+    "try_this": [
+      "Run the circuit and compare the final histogram with the equal-superposition stage.",
+      "Use the graph above to see why the target amplitude jumps after diffusion.",
+      "Notice that the oracle changes phase first and probability only later."
+    ]
+  },
+  "quiz": [
+    {
+      "question": "What is the classical query complexity of unstructured search over N items?",
+      "options": [
+        "O(log N)",
+        "O(sqrt(N))",
+        "O(N)",
+        "O(N^2)"
+      ],
+      "answer": "O(N)",
+      "explanation": "Without structure, a classical algorithm may need to check each candidate one by one."
+    },
+    {
+      "question": "What does the oracle do in Grover's algorithm?",
+      "options": [
+        "Measures the register",
+        "Flips the phase of the marked state",
+        "Creates superposition",
+        "Resets the circuit"
+      ],
+      "answer": "Flips the phase of the marked state",
+      "explanation": "The oracle marks the answer by changing its sign, which prepares it for amplitude amplification."
+    },
+    {
+      "question": "What is the job of the diffusion operator?",
+      "options": [
+        "Destroy superposition",
+        "Amplify the marked state's probability by reflecting amplitudes about their mean",
+        "Add more qubits",
+        "Estimate the phase directly"
+      ],
+      "answer": "Amplify the marked state's probability by reflecting amplitudes about their mean",
+      "explanation": "Diffusion is the step that converts a phase-marked answer into a high-probability answer."
+    },
+    {
+      "question": "Why can too many Grover iterations be harmful?",
+      "options": [
+        "The oracle stops working after one call",
+        "The state can rotate past the target and reduce success probability",
+        "Hadamard gates become irreversible",
+        "Measurement no longer works"
+      ],
+      "answer": "The state can rotate past the target and reduce success probability",
+      "explanation": "Grover amplification behaves like a rotation, so overshooting the optimal step count moves probability away from the solution again."
+    }
+  ]
+}

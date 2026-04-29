@@ -1,0 +1,217 @@
+{
+    "id": "shors_algorithm",
+    "title": "Shor's Algorithm",
+    "level": "advance",
+    "theory": {
+        "introduction": "Shor's Algorithm is a quantum algorithm used to efficiently factor large integers. It demonstrates exponential speedup compared to the best known classical factoring algorithms and has major implications for cryptography, especially RSA encryption.",
+        "key_points": [
+            "Efficient integer factorization using quantum computation",
+            "Uses Quantum Phase Estimation as a core subroutine",
+            "Transforms factoring problem into period finding problem",
+            "Exponential speedup over classical algorithms",
+            "Breaks RSA cryptography if large-scale quantum computers exist"
+        ],
+        "intuition": {
+            "description": "Factoring large numbers is difficult classically. Shor's algorithm converts factoring into a periodicity detection problem, which quantum computers can solve efficiently using interference.",
+            "core_idea": "Find the period of modular exponentiation function using quantum phase estimation."
+        },
+        "mathematical_representation": {
+            "modular_function": "f(x) = a^x mod N",
+            "period_condition": "f(x+r) = f(x)",
+            "factor_relation": "gcd(a^{r/2} ± 1, N)",
+            "requirement": "r must be even and a^(r/2) ≠ -1 mod N",
+            "controlled_unitary": "CU|c⟩|ψ⟩ = |c⟩ U^c |ψ⟩",
+            "inverse_qft": "QFT^†|j⟩ = (1/√N) Σ_{k=0}^{N-1} e^{-2πijk/N}|k⟩"
+        },
+        "sections": [
+            {
+                "title": "Problem Definition",
+                "content": [
+                    "Given a composite number N, find its prime factors",
+                    "Classical factoring becomes inefficient for very large numbers",
+                    "Shor's algorithm provides polynomial-time solution"
+                ]
+            },
+            {
+                "title": "Reduction to Period Finding",
+                "content": [
+                    "Choose a random integer a such that gcd(a,N)=1",
+                    "Define function f(x)=a^x mod N",
+                    "Find the period r such that f(x+r)=f(x)",
+                    "Period r reveals factors of N"
+                ]
+            },
+            {
+                "title": "Quantum Advantage",
+                "content": [
+                    "Quantum parallelism evaluates many inputs simultaneously",
+                    "Quantum interference amplifies correct period values",
+                    "QFT extracts periodic structure efficiently"
+                ]
+            },
+            {
+                "title": "Classical Post Processing",
+                "content": [
+                    "Once period r is found, compute gcd(a^(r/2) ± 1, N)",
+                    "High probability of obtaining non-trivial factors",
+                    "May require multiple attempts"
+                ]
+            }
+        ]
+    },
+    "algorithm_structure": {
+        "registers": {
+            "input_register": "Superposition of values from 0 to Q-1",
+            "output_register": "Stores modular exponentiation results"
+        },
+        "steps": [
+            {
+                "step": 1,
+                "description": "Choose integer N to factor"
+            },
+            {
+                "step": 2,
+                "description": "Pick random integer a such that gcd(a,N)=1"
+            },
+            {
+                "step": 3,
+                "description": "Create superposition of input values"
+            },
+            {
+                "step": 4,
+                "description": "Compute f(x)=a^x mod N using modular exponentiation circuit"
+            },
+            {
+                "step": 5,
+                "description": "Apply Quantum Fourier Transform"
+            },
+            {
+                "step": 6,
+                "description": "Measure to obtain period r"
+            },
+            {
+                "step": 7,
+                "description": "Compute gcd(a^(r/2) ± 1, N) to find factors"
+            }
+        ]
+    },
+    "circuit_examples": [
+        {
+            "name": "Period Finding Circuit",
+            "description": "Core quantum circuit for estimating period",
+            "circuit_pattern": [
+                "Apply H gates to input register",
+                "Apply modular exponentiation unitary",
+                "Apply inverse QFT",
+                "Measure input register"
+            ]
+        }
+    ],
+    "applications": [
+        "Breaking RSA cryptography",
+        "Cryptanalysis",
+        "Number theory research",
+        "Demonstrating quantum computational advantage"
+    ],
+    "complexity": {
+        "classical": "Sub-exponential time",
+        "quantum": "Polynomial time O((log N)^3)"
+    },
+    "summary": "Shor's algorithm efficiently factors integers by converting factoring into a period finding problem solved using Quantum Fourier Transform.",
+    "difficulty": "hard",
+    "estimated_time": "45-60 minutes",
+    "prerequisites": [
+        "Quantum Fourier Transform",
+        "Phase Estimation",
+        "Modular Arithmetic",
+        "Multi-Qubit Systems"
+    ],
+    "simulation": {
+        "initial_state": "|000⟩",
+        "operations": [
+            {
+                "gate": "H",
+                "target": 0
+            },
+            {
+                "gate": "H",
+                "target": 1
+            },
+            {
+                "gate": "CONTROLLED-U",
+                "control": 0,
+                "target": 2
+            },
+            {
+                "gate": "CONTROLLED-U^2",
+                "control": 1,
+                "target": 2
+            },
+            {
+                "gate": "QFT†",
+                "target": 0,
+                "targets": [
+                    0,
+                    1
+                ]
+            },
+            {
+                "gate": "MEASURE",
+                "target": 0
+            },
+            {
+                "gate": "MEASURE",
+                "target": 1
+            }
+        ],
+        "expected_result": "Measurement reveals information about the period r",
+        "try_this": [
+            "Change value of N",
+            "Try different values of a",
+            "Observe how period affects measurement",
+            "Increase number of counting qubits for better precision"
+        ]
+    },
+    "quiz": [
+        {
+            "question": "What computational problem does Shor's algorithm solve?",
+            "options": [
+                "Sorting numbers",
+                "Integer factorization",
+                "Searching unsorted database",
+                "Matrix multiplication"
+            ],
+            "answer": "Integer factorization"
+        },
+        {
+            "question": "Which quantum subroutine is essential for Shor's algorithm?",
+            "options": [
+                "Grover search",
+                "Quantum teleportation",
+                "Quantum Fourier Transform",
+                "Amplitude amplification"
+            ],
+            "answer": "Quantum Fourier Transform"
+        },
+        {
+            "question": "What mathematical concept allows factoring using period finding?",
+            "options": [
+                "Derivative",
+                "Periodicity of modular exponentiation",
+                "Matrix inversion",
+                "Probability amplitude"
+            ],
+            "answer": "Periodicity of modular exponentiation"
+        },
+        {
+            "question": "Why is Shor's algorithm important?",
+            "options": [
+                "It speeds up sorting",
+                "It breaks widely used cryptographic systems",
+                "It improves classical computers",
+                "It reduces qubit noise"
+            ],
+            "answer": "It breaks widely used cryptographic systems"
+        }
+    ]
+}

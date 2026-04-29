@@ -42,6 +42,12 @@ const TEXT_REPLACEMENTS = [
   ['Â', ''],
 ]
 
+const QUANTUM_SYMBOL_PATTERN = /(?:\|\s*[^|>⟩]+\s*[>⟩]|[=αβγδψΦΨθφ√⟨⟩₀₁⊗→]|\[\[|O\()/u
+const FORMULA_START_PATTERN = /(?:\(\s*\|)|(?:\|\s*[^|>⟩]+\s*[>⟩])|[αβγδψΦΨθφ√⟨]|\[\[|O\(/u
+const PROSE_WORD_PATTERN = /\b[A-Za-z]{2,}(?:-[A-Za-z0-9]+)?\b/g
+const INLINE_FORMULA_PREFIX_PATTERN =
+  /\b(?:is|are|in|as|equals|becomes|gives|yields|written as|represented by|described by|starts in|start with)\s*$/i
+
 export function normalizeQuantumText(value) {
   let text = String(value ?? '')
 
@@ -50,6 +56,46 @@ export function normalizeQuantumText(value) {
   })
 
   return text.trim()
+}
+
+export function containsQuantumNotation(value) {
+  const text = normalizeQuantumText(value)
+  return QUANTUM_SYMBOL_PATTERN.test(text)
+}
+
+export function countProseWords(value) {
+  const text = normalizeQuantumText(value)
+  return text.match(PROSE_WORD_PATTERN)?.length ?? 0
+}
+
+export function isQuantumFormulaLike(value) {
+  const text = normalizeQuantumText(value)
+  if (!text || !containsQuantumNotation(text)) return false
+  if (/[.!?]$/.test(text)) return false
+
+  const formulaStartIndex = text.search(FORMULA_START_PATTERN)
+  if (formulaStartIndex > 0) {
+    const leadingText = text.slice(0, formulaStartIndex).trim()
+    if (countProseWords(leadingText) >= 2) return false
+  }
+
+  return countProseWords(text) <= 4
+}
+
+export function splitLeadingTextFromFormula(value) {
+  const text = normalizeQuantumText(value)
+  if (!text || !containsQuantumNotation(text)) return null
+
+  const formulaStartIndex = text.search(FORMULA_START_PATTERN)
+  if (formulaStartIndex <= 0) return null
+
+  const prefix = text.slice(0, formulaStartIndex).trimEnd()
+  const formula = text.slice(formulaStartIndex).trim()
+
+  if (!INLINE_FORMULA_PREFIX_PATTERN.test(prefix)) return null
+  if (!isQuantumFormulaLike(formula)) return null
+
+  return { prefix, formula }
 }
 
 export function escapeMdxText(value) {

@@ -1,0 +1,216 @@
+{
+    "id": "quantum_walks",
+    "title": "Quantum Walks",
+    "level": "advance",
+    "theory": {
+        "introduction": "Quantum Walks are the quantum analog of classical random walks. Instead of moving randomly step by step, quantum walkers evolve using superposition and interference, allowing faster spreading across a graph. Quantum walks form the basis for several quantum algorithms that provide speedups over classical methods.",
+        "key_points": [
+            "Quantum version of classical random walk",
+            "Uses superposition and interference",
+            "Probability spreads quadratically faster",
+            "Important for search and graph algorithms",
+            "Foundation for several quantum speedups"
+        ],
+        "intuition": {
+            "description": "In a classical random walk, a particle moves left or right randomly. In a quantum walk, the particle explores multiple paths simultaneously, and interference changes probability distribution.",
+            "core_idea": "Interference allows quantum walkers to find important paths faster."
+        },
+        "mathematical_representation": {
+            "state_representation": "|ψ⟩ = Σ α_i |i⟩",
+            "unitary_evolution": "|ψ(t)⟩ = U^t |ψ(0)⟩",
+            "hadamard_coin": "H = (1/√2) [[1,1],[1,-1]]",
+            "shift_operator": "S|x⟩ = |x±1⟩"
+        },
+        "sections": [
+            {
+                "title": "Classical Random Walk",
+                "content": [
+                    "Particle moves randomly step by step",
+                    "Probability distribution spreads slowly",
+                    "Used in search and optimization",
+                    "Movement determined by classical probability"
+                ]
+            },
+            {
+                "title": "Discrete Quantum Walk",
+                "content": [
+                    "Uses quantum coin operator",
+                    "Superposition allows movement in multiple directions",
+                    "Interference changes probability amplitudes",
+                    "Probability spreads faster than classical walk"
+                ]
+            },
+            {
+                "title": "Continuous Quantum Walk",
+                "content": [
+                    "Evolution controlled directly by Hamiltonian",
+                    "No separate coin operator",
+                    "Graph structure determines evolution",
+                    "Used in advanced quantum algorithms"
+                ]
+            },
+            {
+                "title": "Quantum Interference",
+                "content": [
+                    "Paths can interfere constructively or destructively",
+                    "Important paths amplified",
+                    "Unimportant paths canceled",
+                    "Improves search efficiency"
+                ]
+            },
+            {
+                "title": "Speed Advantage",
+                "content": [
+                    "Quantum walk spreads probability quadratically faster",
+                    "Improves search problems",
+                    "Useful for graph traversal",
+                    "Provides algorithmic speedups"
+                ]
+            }
+        ]
+    },
+    "algorithm_structure": {
+        "goal": "Explore state space using quantum evolution",
+        "steps": [
+            {
+                "step": 1,
+                "description": "Initialize position state"
+            },
+            {
+                "step": 2,
+                "description": "Apply quantum coin operator"
+            },
+            {
+                "step": 3,
+                "description": "Apply shift operator"
+            },
+            {
+                "step": 4,
+                "description": "Repeat evolution multiple steps"
+            },
+            {
+                "step": 5,
+                "description": "Measure probability distribution"
+            }
+        ]
+    },
+    "circuit_examples": [
+        {
+            "name": "1D Discrete Quantum Walk",
+            "description": "Simple walk along linear positions",
+            "circuit_pattern": [
+                "Apply Hadamard coin",
+                "Apply conditional shift",
+                "Repeat steps",
+                "Measure position state"
+            ]
+        },
+        {
+            "name": "Graph Quantum Walk",
+            "description": "Walk across graph nodes",
+            "objective": "Search or explore graph structure"
+        }
+    ],
+    "applications": [
+        "Search algorithms",
+        "Graph traversal",
+        "Optimization problems",
+        "Network analysis",
+        "Element distinctness problem"
+    ],
+    "real_world_examples": [
+        "Network routing optimization",
+        "Database search",
+        "Social network analysis",
+        "Path finding problems"
+    ],
+    "comparison_classical": {
+        "classical_walk": "Probability spreads proportional to √t",
+        "quantum_walk": "Probability spreads proportional to t"
+    },
+    "summary": "Quantum walks use interference and superposition to explore state space faster than classical random walks, enabling speedups in search and graph-based problems.",
+    "difficulty": "hard",
+    "estimated_time": "35-45 minutes",
+    "prerequisites": [
+        "Superposition",
+        "Multi-Qubit Systems",
+        "Unitary Operators",
+        "Hamiltonian Simulation"
+    ],
+    "simulation": {
+        "initial_state": "|0⟩",
+        "operations": [
+            {
+                "gate": "H",
+                "target": 0
+            },
+            {
+                "gate": "SHIFT_RIGHT",
+                "control": 0,
+                "target": 1
+            },
+            {
+                "gate": "H",
+                "target": 0
+            },
+            {
+                "gate": "SHIFT_LEFT",
+                "control": 0,
+                "target": 1
+            },
+            {
+                "gate": "MEASURE",
+                "target": 0
+            }
+        ],
+        "expected_result": "Probability distribution spreads faster than classical random walk",
+        "try_this": [
+            "Increase number of steps",
+            "Change initial state",
+            "Compare classical vs quantum spreading",
+            "Observe interference patterns"
+        ]
+    },
+    "quiz": [
+        {
+            "question": "Quantum walks are the quantum version of what concept?",
+            "options": [
+                "Sorting",
+                "Random walks",
+                "Matrix multiplication",
+                "Fourier transform"
+            ],
+            "answer": "Random walks"
+        },
+        {
+            "question": "Why are quantum walks faster?",
+            "options": [
+                "More memory",
+                "Quantum interference",
+                "Better hardware",
+                "Parallel classical processing"
+            ],
+            "answer": "Quantum interference"
+        },
+        {
+            "question": "What operator acts like a coin flip?",
+            "options": [
+                "CNOT",
+                "Hadamard",
+                "Z gate",
+                "Measurement"
+            ],
+            "answer": "Hadamard"
+        },
+        {
+            "question": "Quantum walks are useful for?",
+            "options": [
+                "Sorting numbers",
+                "Graph search",
+                "Printing text",
+                "Error correction"
+            ],
+            "answer": "Graph search"
+        }
+    ]
+}

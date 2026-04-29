@@ -1,0 +1,246 @@
+{
+  "id": "multi_qubit_system",
+  "title": "Multi-Qubit Systems",
+  "level": "intermediate",
+  "theory": {
+    "introduction": "When we combine multiple qubits, we enter the domain of multi-qubit systems. These systems unlock the most powerful quantum phenomena — entanglement, interference, and genuine quantum parallelism. A system of n qubits can represent 2^n states simultaneously, giving quantum computers their exponential power.",
+    "start_from_zero": "A single qubit has two basis states: |0⟩ and |1⟩. When we have multiple qubits, we combine them using a mathematical operation called the tensor product. For example, two qubits create four basis states: |00⟩, |01⟩, |10⟩, and |11⟩. Three qubits create eight basis states.",
+    "why_it_matters": "Multi-qubit systems are where quantum computing becomes truly powerful. Entanglement exists only in multi-qubit systems and enables correlations that are impossible in classical systems. Almost all useful quantum algorithms operate on multiple qubits.",
+    "core_idea": "Multiple qubits are described by a joint state vector in a combined Hilbert space. The joint state is the tensor product of individual qubit states — unless the qubits are entangled, in which case the joint state cannot be separated into individual parts.",
+    "key_points": [
+      "n qubits span a 2^n dimensional state space",
+      "Two-qubit basis states: |00⟩, |01⟩, |10⟩, |11⟩",
+      "Three qubits produce 8 basis states",
+      "State of multiple qubits is described using tensor products",
+      "Entangled states cannot be written as a product of individual qubit states",
+      "Multi-qubit gates allow qubits to interact",
+      "CNOT is the most important entangling gate",
+      "Measurement of one qubit can affect outcomes of others"
+    ],
+    "mathematical_representation": {
+      "two_qubit_state": "|ψ⟩ = α|00⟩ + β|01⟩ + γ|10⟩ + δ|11⟩",
+      "three_qubit_state": "|ψ⟩ = α|000⟩ + β|001⟩ + γ|010⟩ + δ|011⟩ + ε|100⟩ + ζ|101⟩ + η|110⟩ + θ|111⟩",
+      "normalization": "Sum of squared amplitudes equals 1",
+      "tensor_product_example": "|0⟩ ⊗ |1⟩ = |01⟩",
+      "bell_state": "(|00⟩ + |11⟩)/√2"
+    },
+    "tensor_product": {
+      "description": "The tensor product combines multiple qubit states into one joint state. If qubit A is in state α|0⟩ + β|1⟩ and qubit B is in state γ|0⟩ + δ|1⟩, their combined state contains all possible combinations of both qubits.",
+      "general_rule": "α γ |00⟩ + α δ |01⟩ + β γ |10⟩ + β δ |11⟩"
+    },
+    "multi_qubit_gates": {
+      "description": "Multi-qubit gates operate on two or more qubits simultaneously. These gates allow qubits to interact with each other, enabling conditional operations and entanglement.",
+      "why_important": "Without multi-qubit gates, qubits would behave independently and quantum computers would lose their advantage. These gates allow correlations and interference patterns required for algorithms like Grover search and Quantum Fourier Transform.",
+      "key_gates": [
+        {
+          "name": "CNOT Gate",
+          "symbol": "CX",
+          "description": "Flips the target qubit only when the control qubit is |1⟩.",
+          "intuition": "Acts like a quantum IF statement.",
+          "example": "|10⟩ → |11⟩",
+          "importance": "Main gate used to create entanglement"
+        },
+        {
+          "name": "CZ Gate",
+          "symbol": "CZ",
+          "description": "Applies a phase flip only when both qubits are |1⟩.",
+          "intuition": "Changes phase of |11⟩ but keeps probabilities same.",
+          "example": "|11⟩ → -|11⟩",
+          "importance": "Useful for phase-based algorithms"
+        },
+        {
+          "name": "SWAP Gate",
+          "symbol": "SWAP",
+          "description": "Exchanges the states of two qubits.",
+          "intuition": "Moves quantum information between qubits.",
+          "example": "|01⟩ → |10⟩",
+          "importance": "Helps reorganize qubits in circuits"
+        }
+      ],
+      "core_idea": "Multi-qubit gates create conditional behavior between qubits. This interaction produces correlations not possible in classical systems."
+    },
+    "entanglement": {
+      "description": "Entanglement is a uniquely quantum phenomenon where qubits become strongly correlated. The state of one qubit cannot be described independently of the other.",
+      "example": "(|00⟩ + |11⟩)/√2",
+      "creation": "Apply Hadamard to qubit 0, then apply CNOT with qubit 0 as control and qubit 1 as target."
+    },
+    "cnot_gate": {
+      "description": "The Controlled-NOT gate flips the target qubit only when the control qubit is |1⟩.",
+      "truth_table": "|00⟩→|00⟩, |01⟩→|01⟩, |10⟩→|11⟩, |11⟩→|10⟩",
+      "use_case": "Used to create entanglement and perform conditional logic"
+    },
+    "sections": [
+      {
+        "title": "State Space Grows Exponentially",
+        "content": [
+          "1 qubit → 2 basis states",
+          "2 qubits → 4 basis states",
+          "3 qubits → 8 basis states",
+          "n qubits → 2^n basis states",
+          "State space grows exponentially"
+        ]
+      },
+      {
+        "title": "Bell States (Maximally Entangled)",
+        "content": [
+          "(|00⟩ + |11⟩)/√2",
+          "(|00⟩ - |11⟩)/√2",
+          "(|01⟩ + |10⟩)/√2",
+          "(|01⟩ - |10⟩)/√2",
+          "These represent strongest possible correlations between two qubits"
+        ]
+      },
+      {
+        "title": "Creating Entanglement Step by Step",
+        "content": [
+          "Start with |00⟩",
+          "Apply H on q0 → superposition",
+          "Apply CNOT(q0,q1)",
+          "Final state becomes entangled Bell state"
+        ]
+      }
+    ]
+  },
+  "examples": [
+    {
+      "title": "Creating Bell State",
+      "description": "Apply Hadamard to first qubit, then CNOT to create entanglement.",
+      "circuit": [
+        {
+          "gate": "H",
+          "target": 0
+        },
+        {
+          "gate": "CNOT",
+          "control": 0,
+          "target": 1
+        }
+      ],
+      "result": "(|00⟩ + |11⟩)/√2",
+      "insight": "Both qubits become correlated. Measuring one determines the other."
+    },
+    {
+      "title": "Independent Superposition",
+      "description": "Apply Hadamard to each qubit separately.",
+      "circuit": [
+        {
+          "gate": "H",
+          "target": 0
+        },
+        {
+          "gate": "H",
+          "target": 1
+        }
+      ],
+      "result": "(|00⟩ + |01⟩ + |10⟩ + |11⟩)/2",
+      "insight": "All states have equal probability but qubits are not entangled."
+    },
+    {
+      "title": "GHZ State (3 qubits)",
+      "description": "Create 3-qubit entangled state.",
+      "circuit": [
+        {
+          "gate": "H",
+          "target": 0
+        },
+        {
+          "gate": "CNOT",
+          "control": 0,
+          "target": 1
+        },
+        {
+          "gate": "CNOT",
+          "control": 0,
+          "target": 2
+        }
+      ],
+      "result": "(|000⟩ + |111⟩)/√2",
+      "insight": "All three qubits become correlated."
+    }
+  ],
+  "comparisons": [
+    {
+      "feature": "State description",
+      "product_state": "Can be written as product of individual qubits",
+      "entangled_state": "Cannot be separated into individual states"
+    },
+    {
+      "feature": "Measurement correlation",
+      "product_state": "Independent results",
+      "entangled_state": "Results are correlated"
+    }
+  ],
+  "common_mistakes": [
+    "Assuming all multi-qubit states are entangled",
+    "Thinking entanglement allows communication faster than light",
+    "Confusing tensor product with multiplication",
+    "Forgetting that CNOT flips only when control is 1",
+    "Thinking 3 qubits store only 3 values instead of 8 amplitudes"
+  ],
+  "simulation": {
+    "type": "multi_qubit_interactive",
+    "max_qubits": 3,
+    "allowed_gates": [
+      "H",
+      "X",
+      "Z",
+      "CNOT",
+      "CZ",
+      "SWAP"
+    ],
+    "initial_state": "|000⟩",
+    "try_this": [
+      "Create Bell state using H and CNOT",
+      "Apply H on all 3 qubits to see 8-state superposition",
+      "Create GHZ state using 2 CNOT gates",
+      "Use CZ gate to change phase of |11⟩",
+      "Use SWAP to exchange qubit states"
+    ]
+  },
+  "quiz": [
+    {
+      "question": "How many basis states exist for 3 qubits?",
+      "options": [
+        "3",
+        "6",
+        "8",
+        "16"
+      ],
+      "answer": "8",
+      "explanation": "2^3 = 8 basis states"
+    },
+    {
+      "question": "Which gate is mainly used to create entanglement?",
+      "options": [
+        "X",
+        "H",
+        "CNOT",
+        "Z"
+      ],
+      "answer": "CNOT",
+      "explanation": "CNOT creates correlation between qubits"
+    },
+    {
+      "question": "What does SWAP gate do?",
+      "options": [
+        "Flips qubit",
+        "Creates superposition",
+        "Exchanges qubit states",
+        "Measures qubit"
+      ],
+      "answer": "Exchanges qubit states",
+      "explanation": "SWAP interchanges states of two qubits"
+    },
+    {
+      "question": "What happens when CNOT control is |0⟩?",
+      "options": [
+        "Target flips",
+        "Nothing happens",
+        "Target becomes superposition",
+        "Target becomes 0"
+      ],
+      "answer": "Nothing happens",
+      "explanation": "CNOT acts only when control = 1"
+    }
+  ]
+}

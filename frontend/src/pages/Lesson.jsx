@@ -8,16 +8,16 @@ import QuizSection from '../components/QuizSection'
 
 function SectionIntro({ icon, label, title, subtitle }) {
   return (
-    <header className="section-header" style={{ marginBottom: 24 }}>
-      <div className="section-heading">
-        <p className="section-eyebrow">{label}</p>
-        <div className="flex items-start gap-4">
-          <div
-            className="w-11 h-11 rounded-2xl flex items-center justify-center flex-shrink-0"
-            style={{ background: 'var(--surface-soft)', border: '1px solid var(--border)' }}
-          >
-            {createElement(icon, { size: 18, color: 'var(--accent-strong)' })}
-          </div>
+          <header className="section-header" style={{ marginBottom: 24 }}>
+            <div className="section-heading">
+              <p className="section-eyebrow">{label}</p>
+              <div className="flex items-start gap-4">
+                <div
+                  className="w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0"
+                  style={{ background: 'var(--bg-primary)', border: '1px solid var(--border)' }}
+                >
+                  {createElement(icon, { size: 18, color: 'var(--accent-strong)' })}
+                </div>
           <div>
             <h2 className="section-title">{title}</h2>
             {subtitle && <p className="section-subtitle">{subtitle}</p>}
@@ -46,19 +46,23 @@ export default function Lesson() {
       .finally(() => setLoading(false))
   }, [id])
 
-  const hasSimulation = Boolean(data?.simulation)
-  const hasQuiz = data?.quiz?.length > 0
+  const isResearch = data?.level === 'research'
+  const hasSimulation = Boolean(data?.simulation) && !isResearch
+  const hasQuiz = data?.quiz?.length > 0 && !isResearch
+  const hasOpenQuestions = data?.open_questions?.length > 0 && isResearch
   const lessonSummary =
     data?.theory?.introduction ||
     data?.theory?.why_it_matters ||
     data?.summary ||
     'Read the lesson, inspect the circuit, and review the core ideas step by step.'
-
-  const steps = [
-    { label: 'Theory', id: 'theory-heading', present: true },
-    { label: 'Interactive Lab', id: 'simulation-heading', present: hasSimulation },
-    { label: 'Quiz', id: 'quiz-heading', present: hasQuiz },
-  ].filter(s => s.present)
+  const simulationTitle =
+    data?.simulation?.section_title ||
+    (data?.simulation?.type === 'state_visualization' ? 'State Visualizer' : 'Quantum simulator')
+  const simulationSubtitle =
+    data?.simulation?.section_subtitle ||
+    (data?.simulation?.type === 'state_visualization'
+      ? 'Interact with the predefined states to observe their properties and components instantly.'
+      : 'Run the interactive circuit to inspect amplitudes or measurement results.')
 
   return (
     <article className="px-2 py-6 md:px-4 md:py-10">
@@ -87,14 +91,14 @@ export default function Lesson() {
         <>
           <header className="page-header-card" style={{ marginBottom: 32 }}>
             <h1
-              className="text-[34px] md:text-[40px] font-bold mb-5"
+              className="text-[30px] md:text-[34px] font-bold mb-4"
               style={{ color: 'var(--text-primary)', letterSpacing: '-0.04em', lineHeight: 1.15 }}
             >
               {data.title}
             </h1>
             <p
-              className="text-lg md:text-xl max-w-3xl"
-              style={{ color: 'var(--text-secondary)', lineHeight: 1.85 }}
+              className="text-base md:text-lg max-w-3xl"
+              style={{ color: 'var(--text-secondary)', lineHeight: 1.75 }}
             >
               {lessonSummary}
             </p>
@@ -116,8 +120,8 @@ export default function Lesson() {
               <SectionIntro
                 icon={Cpu}
                 label="Interactive Lab"
-                title="Quantum simulator"
-                subtitle="Run the backend-powered circuit and inspect amplitudes or measurement results from the current lesson."
+                title={simulationTitle}
+                subtitle={simulationSubtitle}
               />
               <div id="simulation-heading">
                 <SimulationSection topic={id} simulation={data.simulation} theory={data.theory} />
@@ -135,6 +139,26 @@ export default function Lesson() {
               />
               <div id="quiz-heading">
                 <QuizSection quiz={data.quiz} />
+              </div>
+            </section>
+          )}
+
+          {hasOpenQuestions && (
+            <section className="section-shell" aria-labelledby="questions-heading">
+              <SectionIntro
+                icon={HelpCircle}
+                label="Thought Experiment"
+                title="Open Questions"
+                subtitle="Contemplate these unanswered questions and active research directions."
+              />
+              <div id="questions-heading" className="soft-panel p-5 mt-4">
+                <ul className="space-y-3 pl-4">
+                  {data.open_questions.map((question, idx) => (
+                    <li key={idx} className="list-disc text-base text-gray-300 leading-relaxed font-medium">
+                      {question}
+                    </li>
+                  ))}
+                </ul>
               </div>
             </section>
           )}

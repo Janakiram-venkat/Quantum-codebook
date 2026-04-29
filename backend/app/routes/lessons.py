@@ -6,8 +6,9 @@ router = APIRouter()
 
 CONTENT_BASE_PATH = os.path.join(os.path.dirname(__file__), "..", "..", "content")
 LEVEL_FOLDERS = {
-    "begainner": "begainner",
-    "intermidiate": "intermidiate",
+    "beginner": "beginner",
+    "intermediate": "intermediate",
+    "advance": "advance",
     "research": "research",
 }
 
@@ -21,7 +22,7 @@ def build_lesson_summary(level: str, file_name: str):
         "level": level,
     }
 
-    file_path = os.path.join(CONTENT_BASE_PATH, LEVEL_FOLDERS.get(level, "begainner"), file_name)
+    file_path = os.path.join(CONTENT_BASE_PATH, LEVEL_FOLDERS.get(level, "beginner"), file_name)
 
     try:
         with open(file_path, "r", encoding="utf-8") as f:

@@ -1,4 +1,10 @@
-import { escapeMdxText, normalizeQuantumText, quoteMdxProp } from './quantumText.js'
+import {
+  escapeMdxText,
+  isQuantumFormulaLike,
+  normalizeQuantumText,
+  quoteMdxProp,
+  splitLeadingTextFromFormula,
+} from './quantumText.js'
 
 function asArray(value) {
   if (Array.isArray(value)) return value.filter(Boolean)
@@ -14,19 +20,42 @@ function formatLabel(value) {
     .trim()
 }
 
+function renderInlineText(value) {
+  const normalized = normalizeQuantumText(value)
+  if (!normalized) return ''
+
+  const inlineFormula = splitLeadingTextFromFormula(normalized)
+  if (!inlineFormula) {
+    return escapeMdxText(normalized)
+  }
+
+  return `${escapeMdxText(inlineFormula.prefix)} <MathText value={${quoteMdxProp(inlineFormula.formula)}} />`
+}
+
 function renderParagraph(value) {
   if (value === null || value === undefined || typeof value === 'object') return ''
-  const text = escapeMdxText(value)
-  return text ? text : ''
+  return renderInlineText(value)
 }
 
 function renderList(items) {
-  const lines = asArray(items).map(item => {
-    if (isFormulaCandidate(item)) {
-       return `- <MathText value={${quoteMdxProp(item)}} />`
-    }
-    return `- ${escapeMdxText(item)}`
-  })
+  const lines = asArray(items)
+    .map(item => {
+      const normalized = normalizeQuantumText(item)
+      if (!normalized) return ''
+
+      const inlineFormula = splitLeadingTextFromFormula(normalized)
+      if (inlineFormula) {
+        return `- ${escapeMdxText(inlineFormula.prefix)} <MathText value={${quoteMdxProp(inlineFormula.formula)}} />`
+      }
+
+      if (isFormulaCandidate(normalized)) {
+        return `- <MathText value={${quoteMdxProp(normalized)}} />`
+      }
+
+      return `- ${escapeMdxText(normalized)}`
+    })
+    .filter(Boolean)
+
   return lines.length > 0 ? lines.join('\n') : ''
 }
 
@@ -72,23 +101,7 @@ function renderComparison(compare) {
 }
 
 function isFormulaCandidate(value) {
-  const text = normalizeQuantumText(value)
-  if (!text) return false
-
-  if (/[.!?]$/.test(text.trim())) return false
-
-  // Prevent full english prose lines from being flagged strictly as formulas
-  const words = text.split(/\s+/)
-  const proseWords = words.filter(w => /^[a-zA-Z]{2,}[,.:;!?]?$/.test(w))
-  if (proseWords.length >= 4) return false
-
-  return (
-    /[=αβγδψΦΨθφ√⟨⟩₀₁|^]/u.test(text) ||
-    text.includes('→') ||
-    text.includes('⊗') ||
-    text.includes('[[') ||
-    /^\s*O\(.*\)\s*$/.test(text)
-  )
+  return isQuantumFormulaLike(value)
 }
 
 function renderNamedParagraphs(value) {
@@ -157,9 +170,7 @@ function renderTheorySection(section) {
   if (contentList) blocks.push(contentList)
 
   if (exampleItems.length > 0) {
-    const renderedExamples = exampleItems
-      .map(example => (isFormulaCandidate(example) ? renderFormula(example) : `- ${escapeMdxText(example)}`))
-      .join('\n')
+    const renderedExamples = renderList(exampleItems)
 
     blocks.push('**Examples**')
     blocks.push(renderedExamples)

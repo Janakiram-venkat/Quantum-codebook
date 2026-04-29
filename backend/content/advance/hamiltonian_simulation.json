@@ -1,0 +1,210 @@
+{
+    "id": "hamiltonian_simulation",
+    "title": "Hamiltonian Simulation",
+    "level": "advance",
+    "theory": {
+        "introduction": "Hamiltonian Simulation is one of the most important applications of quantum computing. It allows quantum computers to simulate the time evolution of physical systems such as molecules, materials, and quantum fields. Classical computers struggle to simulate quantum systems efficiently due to exponential complexity.",
+        "key_points": [
+            "Hamiltonian describes total energy of a quantum system",
+            "Time evolution of quantum systems depends on Hamiltonian",
+            "Quantum computers naturally simulate quantum systems",
+            "Simulation enables applications in chemistry and materials science",
+            "Trotter decomposition allows implementation on quantum circuits"
+        ],
+        "intuition": {
+            "description": "In physics, the Hamiltonian determines how a quantum system evolves over time. Instead of solving complex equations classically, quantum computers simulate the system directly using qubits.",
+            "core_idea": "Simulate how quantum states evolve using energy operators."
+        },
+        "mathematical_representation": {
+            "time_evolution_operator": "U(t) = e^{-iHt}",
+            "schrodinger_equation": "i d|ψ(t)⟩/dt = H|ψ(t)⟩",
+            "pauli_decomposition": "H = Σ c_k P_k",
+            "trotter_approximation": "e^{-i(A+B)t} ≈ (e^{-iAt/n} e^{-iBt/n})^n"
+        },
+        "sections": [
+            {
+                "title": "What is a Hamiltonian?",
+                "content": [
+                    "Hamiltonian is an operator representing total energy of a system",
+                    "Includes kinetic and potential energy components",
+                    "Defines system dynamics",
+                    "Used in quantum mechanics to describe evolution"
+                ]
+            },
+            {
+                "title": "Quantum Time Evolution",
+                "content": [
+                    "Quantum states evolve according to Schrödinger equation",
+                    "Hamiltonian determines how probability amplitudes change",
+                    "Unitary operator describes evolution",
+                    "Quantum circuits approximate this operator"
+                ]
+            },
+            {
+                "title": "Pauli Decomposition",
+                "content": [
+                    "Hamiltonians can be expressed using Pauli matrices",
+                    "Pauli operators form basis for quantum operations",
+                    "Enables circuit implementation",
+                    "Example terms include X, Y, Z interactions"
+                ]
+            },
+            {
+                "title": "Trotterization",
+                "content": [
+                    "Complex Hamiltonians are split into simpler components",
+                    "Each component simulated sequentially",
+                    "Accuracy improves with more steps",
+                    "Tradeoff between precision and circuit depth"
+                ]
+            },
+            {
+                "title": "Why Simulation is Hard Classically",
+                "content": [
+                    "Quantum state dimension grows exponentially",
+                    "Classical simulation requires large matrices",
+                    "Quantum computers store state naturally",
+                    "Simulation complexity reduced"
+                ]
+            }
+        ]
+    },
+    "algorithm_structure": {
+        "goal": "Simulate time evolution operator using quantum gates",
+        "steps": [
+            {
+                "step": 1,
+                "description": "Define Hamiltonian H representing physical system"
+            },
+            {
+                "step": 2,
+                "description": "Decompose Hamiltonian into Pauli terms"
+            },
+            {
+                "step": 3,
+                "description": "Apply exponential operators e^{-iHt}"
+            },
+            {
+                "step": 4,
+                "description": "Use Trotter decomposition for approximation"
+            },
+            {
+                "step": 5,
+                "description": "Measure resulting quantum state"
+            }
+        ]
+    },
+    "circuit_examples": [
+        {
+            "name": "Single Pauli Term Evolution",
+            "description": "Simulate evolution under Z Hamiltonian",
+            "hamiltonian": "H = Z",
+            "circuit_pattern": [
+                "Apply Rz rotation",
+                "Rotation angle proportional to time parameter"
+            ]
+        },
+        {
+            "name": "Two Term Hamiltonian",
+            "description": "Simulate H = X + Z interaction",
+            "circuit_pattern": [
+                "Apply Rx rotation",
+                "Apply Rz rotation",
+                "Repeat using Trotter steps"
+            ]
+        }
+    ],
+    "applications": [
+        "Quantum chemistry",
+        "Drug discovery",
+        "Material science",
+        "Condensed matter physics",
+        "Quantum field theory",
+        "Optimization algorithms"
+    ],
+    "real_world_examples": [
+        "Protein folding simulation",
+        "Molecular energy estimation",
+        "Battery material design",
+        "Superconductor simulation"
+    ],
+    "summary": "Hamiltonian simulation enables quantum computers to efficiently model quantum systems by approximating time evolution using quantum circuits.",
+    "difficulty": "hard",
+    "estimated_time": "40-50 minutes",
+    "prerequisites": [
+        "Linear Algebra",
+        "Pauli Gates",
+        "Unitary Operators",
+        "Quantum Phase Estimation",
+        "Multi-Qubit Systems"
+    ],
+    "simulation": {
+        "initial_state": "|0⟩",
+        "operations": [
+            {
+                "gate": "RZ",
+                "target": 0,
+                "angle": "2t"
+            },
+            {
+                "gate": "RX",
+                "target": 0,
+                "angle": "t"
+            },
+            {
+                "gate": "RZ",
+                "target": 0,
+                "angle": "t"
+            }
+        ],
+        "expected_result": "State evolves according to Hamiltonian operator",
+        "try_this": [
+            "Change evolution time parameter",
+            "Increase number of Trotter steps",
+            "Add interaction terms",
+            "Observe phase changes"
+        ]
+    },
+    "quiz": [
+        {
+            "question": "What does a Hamiltonian represent?",
+            "options": [
+                "Measurement probability",
+                "Total energy of system",
+                "Circuit depth",
+                "Number of qubits"
+            ],
+            "answer": "Total energy of system"
+        },
+        {
+            "question": "What operator describes time evolution?",
+            "options": [
+                "H",
+                "e^{-iHt}",
+                "QFT",
+                "CNOT"
+            ],
+            "answer": "e^{-iHt}"
+        },
+        {
+            "question": "Why is Trotterization used?",
+            "options": [
+                "To measure qubits",
+                "To approximate complex exponentials",
+                "To create entanglement",
+                "To reduce noise"
+            ],
+            "answer": "To approximate complex exponentials"
+        },
+        {
+            "question": "Which field benefits most from Hamiltonian simulation?",
+            "options": [
+                "Image processing",
+                "Quantum chemistry",
+                "Database indexing",
+                "Sorting algorithms"
+            ],
+            "answer": "Quantum chemistry"
+        }
+    ]
+}

@@ -50,7 +50,7 @@ export default function ProbabilityChart({ probabilities = {}, counts = {}, shot
                 className="h-full rounded-full"
                 style={{
                   width: `${pct}%`,
-                  background: `linear-gradient(90deg, ${color}cc, ${color})`,
+                  background: color,
                   transformOrigin: 'left',
                   animation: 'probability-grow 0.7s cubic-bezier(0.16,1,0.3,1)',
                 }}

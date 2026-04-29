@@ -173,11 +173,14 @@
 
   "simulation": {
     "initial_state": "|0⟩",
+    "customizable": true,
+    "available_gates": ["X", "Y", "Z", "H"],
+    "max_gates": 4,
     "operations": [
       { "gate": "H", "target": 0 },
       { "gate": "X", "target": 0 }
     ],
-    "expected_result": "(|0⟩ + |1⟩)/√2",
+    "expected_result": "(|0⟩ + |1⟩)/√2 (For default circuit)",
     "try_this": [
       "Apply H then measure multiple times",
       "Apply Z after H and observe phase change",

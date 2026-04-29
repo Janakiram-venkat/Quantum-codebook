@@ -25,10 +25,17 @@ function GateSequence({ operations = [] }) {
   return (
     <div className="lesson-operation-row">
       {operations.map((operation, index) => {
+        const targets = Array.isArray(operation.targets)
+          ? operation.targets.map(target => `q${target}`).join(', ')
+          : operation.target1 !== undefined && operation.target2 !== undefined
+            ? `q${operation.target1}, q${operation.target2}`
+            : operation.target !== undefined
+              ? `q${operation.target}`
+              : ''
         const hasControl = operation.control !== undefined
         const label = hasControl
-          ? `${operation.gate} q${operation.control} -> q${operation.target}`
-          : `${operation.gate} q${operation.target}`
+          ? `${operation.gate} q${operation.control} -> ${targets}`
+          : `${operation.gate}${targets ? ` ${targets}` : ''}`
 
         return (
           <span key={`${label}-${index}`} className="lesson-operation-pill">

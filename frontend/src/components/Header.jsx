@@ -3,9 +3,9 @@ import { ArrowRight, Maximize2, Minimize2, MoonStar, SunMedium } from 'lucide-re
 import { BRAND_NAME, PRODUCT_NAME, brandLogo } from '../lib/branding.js'
 
 const beginnerLessons = [
-  { id: 'QubitsAndStates', label: 'Qubits and States' },
-  { id: 'singleGates', label: 'Single Gates' },
-  { id: 'Mesurement', label: 'Measurement' },
+  { id: 'qubits_states', label: 'Qubits and States' },
+  { id: 'single_gates', label: 'Single Gates' },
+  { id: 'measurement', label: 'Measurement' },
   { id: 'superposition', label: 'Superposition' },
   { id: 'entanglement', label: 'Entanglement' },
 ]
@@ -16,17 +16,27 @@ const intermediateLessons = [
   { id: 'grovers_algorithm', label: "Grover's Algorithm" },
   { id: 'vqe', label: 'Variational Quantum Eigen Solver' },
   { id: 'noise_model', label: 'Noise Model' },
-  { id: 'quantum_error_corection', label: 'Quantum Error Correction' },
+  { id: 'quantum_error_correction', label: 'Quantum Error Correction' },
+]
+
+const advanceLessons = [
+  { id: 'shors_algorithm', label: "Shor's Algorithm" },
+  { id: 'hamiltonian_simulation', label: 'Hamiltonian Simulation' },
+  { id: 'qaoa', label: 'QAOA' },
+  { id: 'quantum_walks', label: 'Quantum Walks' },
+  { id: 'surface_code', label: 'Surface Codes' },
 ]
 
 const allLessons = {
-  begainner: beginnerLessons,
-  intermidiate: intermediateLessons,
+  beginner: beginnerLessons,
+  intermediate: intermediateLessons,
+  advance: advanceLessons,
 }
 
 const lessonTitles = Object.fromEntries([
   ...beginnerLessons.map(lesson => [lesson.id, lesson.label]),
   ...intermediateLessons.map(lesson => [lesson.id, lesson.label]),
+  ...advanceLessons.map(lesson => [lesson.id, lesson.label]),
 ])
 
 function resolveHeaderState(pathname) {
@@ -39,13 +49,13 @@ function resolveHeaderState(pathname) {
       eyebrow: 'Home',
       title: PRODUCT_NAME,
       nextLabel: 'Beginner Track',
-      nextPath: '/track/begainner',
+      nextPath: '/track/beginner',
     }
   }
 
   if (routeGroup === 'track') {
-    const trackLabel = routeId === 'begainner' ? 'Beginner Track' : routeId === 'intermidiate' ? 'Intermediate Track' : 'Learning Track'
-    const firstLessonId = routeId === 'begainner' ? 'QubitsAndStates' : routeId === 'intermidiate' ? 'multi_qubit_system' : 'QubitsAndStates'
+    const trackLabel = routeId === 'beginner' ? 'Beginner Track' : routeId === 'intermediate' ? 'Intermediate Track' : routeId === 'advance' ? 'Advance Track' : 'Learning Track'
+    const firstLessonId = routeId === 'beginner' ? 'qubits_states' : routeId === 'intermediate' ? 'multi_qubit_system' : routeId === 'advance' ? 'shors_algorithm' : 'qubits_states'
     
     return {
       eyebrow: 'Track',
@@ -57,9 +67,10 @@ function resolveHeaderState(pathname) {
 
   if (routeGroup === 'lesson') {
     // Determine which track the lesson belongs to
+    const isAdvanceLesson = advanceLessons.some(l => l.id === routeId)
     const isIntermediateLesson = intermediateLessons.some(l => l.id === routeId)
-    const lessonArray = isIntermediateLesson ? intermediateLessons : beginnerLessons
-    const trackPath = isIntermediateLesson ? 'intermidiate' : 'begainner'
+    const lessonArray = isAdvanceLesson ? advanceLessons : isIntermediateLesson ? intermediateLessons : beginnerLessons
+    const trackPath = isAdvanceLesson ? 'advance' : isIntermediateLesson ? 'intermediate' : 'beginner'
     
     const currentIndex = lessonArray.findIndex(lesson => lesson.id === routeId)
     const nextLesson = lessonArray[currentIndex + 1]

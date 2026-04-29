@@ -1,378 +1,82 @@
-import { useState } from 'react'
-import axios from 'axios'
-import { Play, Loader2, RotateCcw } from 'lucide-react'
-import BlochSphere from './BlochSphere'
-import CircuitRenderer from './CircuitRenderer'
-import ProbabilityChart from './ProbabilityChart'
-import MathText from './MathText'
-import { resolveSingleQubitBlochState } from '../lib/blochSphere.js'
-import { normalizeQuantumText } from '../lib/quantumText.js'
+import MultiQubitSimulator from './MultiQubitSimulator'
+import StandardCircuitSimulation from './StandardCircuitSimulation'
+import StateVisualizationLab from './StateVisualizationLab'
+import GroverExplorer from './topic_simulators/GroverExplorer'
+import NoiseModelExplorer from './topic_simulators/NoiseModelExplorer'
+import QAOAExplorer from './topic_simulators/QAOAExplorer'
+import SuperpositionExplorer from './topic_simulators/SuperpositionExplorer'
+import MeasurementExplorer from './topic_simulators/MeasurementExplorer'
 
-const actionButtonBase = {
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-  gap: 6,
-  fontSize: 14,
-  borderRadius: 12,
-  padding: '10px 14px',
-  transition: 'all 0.18s ease',
+import QMLSimulator from './research_simulators/QMLSimulator'
+import TopologicalSimulator from './research_simulators/TopologicalSimulator'
+import QuantumChemistrySimulator from './research_simulators/QuantumChemistrySimulator'
+import FaultTolerantSimulator from './research_simulators/FaultTolerantSimulator'
+import QuantumNetworkSimulator from './research_simulators/QuantumNetworkSimulator'
+import VQASimulator from './research_simulators/VQASimulator'
+
+const RESEARCH_SIMULATORS = {
+  quantum_machine_learning: QMLSimulator,
+  topological_quantum_computing: TopologicalSimulator,
+  quantum_chemistry: QuantumChemistrySimulator,
+  fault_tolerant_quantum_computing: FaultTolerantSimulator,
+  quantum_networking: QuantumNetworkSimulator,
+  variational_quantum_algorithms: VQASimulator,
 }
 
-function primaryButtonStyle(loading) {
-  return {
-    ...actionButtonBase,
-    background: loading ? 'rgba(var(--accent-rgb), 0.72)' : 'var(--accent)',
-    border: '1px solid var(--accent)',
-    color: 'var(--text-inverse)',
-    cursor: loading ? 'not-allowed' : 'pointer',
-    boxShadow: 'var(--accent-shadow)',
-  }
-}
-
-function secondaryButtonStyle() {
-  return {
-    ...actionButtonBase,
-    background: 'var(--surface-soft)',
-    border: '1px solid var(--border)',
-    color: 'var(--text-secondary)',
-    cursor: 'pointer',
-  }
-}
-
-function isFormulaLike(value) {
-  const text = normalizeQuantumText(value)
-  return /[=αβγδψΦΨθφ√⟨⟩₀₁|^\[\]]/u.test(text) || text.includes('→') || text.includes('⊗')
-}
-
-function StatePill({ value }) {
-  const normalizedValue = normalizeQuantumText(value)
-
-  return (
-    <span
-      className="font-mono text-base px-4 py-2 rounded-full"
-      style={{
-        background: 'var(--surface-soft)',
-        border: '1px solid var(--border)',
-        color: 'var(--text-primary)',
-      }}
-    >
-      {isFormulaLike(normalizedValue)
-        ? <MathText value={normalizedValue} fallbackClassName="font-mono" />
-        : normalizedValue}
-    </span>
-  )
-}
-
-function amplitudeProbability(amplitude) {
-  const real = Number(amplitude?.real || 0)
-  const imag = Number(amplitude?.imag || 0)
-  return real * real + imag * imag
-}
-
-function formatAmplitude(amplitude) {
-  const real = Number(amplitude?.real || 0)
-  const imag = Number(amplitude?.imag || 0)
-
-  if (Math.abs(imag) < 1e-8) return real.toFixed(6)
-  if (Math.abs(real) < 1e-8) return `${imag.toFixed(6)}i`
-
-  return `${real.toFixed(6)} ${imag >= 0 ? '+' : '-'} ${Math.abs(imag).toFixed(6)}i`
-}
-
-function deriveProbabilities(amplitudes) {
-  return Object.fromEntries(
-    Object.entries(amplitudes).map(([state, amplitude]) => [
-      state,
-      amplitudeProbability(amplitude),
-    ]),
-  )
-}
-
-function AmplitudeGrid({ amplitudes }) {
-  const entries = Object.entries(amplitudes).sort(
-    ([stateA], [stateB]) => stateA.localeCompare(stateB),
-  )
-
-  if (entries.length === 0) return null
-
-  return (
-    <div className="section-grid" data-columns="2">
-      {entries.map(([state, amplitude]) => (
-        <div key={state} className="value-card">
-          <span className="value-label">{`|${state}> amplitude`}</span>
-          <p
-            className="font-mono"
-            style={{ margin: 0, fontSize: 17, fontWeight: 600, color: 'var(--text-primary)' }}
-          >
-            {formatAmplitude(amplitude)}
-          </p>
-          <p className="text-base mt-2" style={{ color: 'var(--text-secondary)', lineHeight: 1.7 }}>
-            Probability {(amplitudeProbability(amplitude) * 100).toFixed(1)}%
-          </p>
-        </div>
-      ))}
-    </div>
-  )
+const TOPIC_LABS = {
+  grovers_algorithm: {
+    Component: GroverExplorer,
+    includeStandard: true,
+  },
+  qaoa: {
+    Component: QAOAExplorer,
+    includeStandard: false,
+  },
+  noise_model: {
+    Component: NoiseModelExplorer,
+    includeStandard: false,
+  },
+  superposition: {
+    Component: SuperpositionExplorer,
+    includeStandard: false,
+  },
+  measurement: {
+    Component: MeasurementExplorer,
+    includeStandard: false,
+  },
 }
 
 export default function SimulationSection({ topic, simulation, theory }) {
-  const [result, setResult] = useState(null)
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState(null)
-  const [ran, setRan] = useState(false)
-  const [activeStep, setActiveStep] = useState(null)
-  const [isAnimating, setIsAnimating] = useState(false)
+  if (!simulation) return null
 
-  const ops = simulation?.operations || []
-  const hasOps = ops.length > 0
-
-  async function runSim() {
-    setLoading(true)
-    setRan(false)
-    setResult(null)
-    setError(null)
-    setActiveStep(null)
-    setIsAnimating(false)
-    try {
-      const res = await axios.get(`/api/simulate/${encodeURIComponent(topic)}`)
-      setLoading(false)
-      
-      if (ops.length > 0) {
-        setIsAnimating(true)
-        let currentStep = 0
-        setActiveStep(0)
-        
-        const timer = setInterval(() => {
-          currentStep++
-          if (currentStep >= ops.length) {
-            clearInterval(timer)
-            setActiveStep(null)
-            setIsAnimating(false)
-            setResult(res.data)
-            setRan(true)
-          } else {
-            setActiveStep(currentStep)
-          }
-        }, 550)
-      } else {
-        setResult(res.data)
-        setRan(true)
-      }
-    } catch (e) {
-      setError(e?.response?.data?.detail || 'Simulation failed. Is the backend running?')
-      setLoading(false)
-    }
+  if (simulation.type === 'multi_qubit_interactive') {
+    return <MultiQubitSimulator simulation={simulation} />
   }
 
-  function reset() {
-    setResult(null)
-    setRan(false)
-    setError(null)
-    setActiveStep(null)
-    setIsAnimating(false)
+  const ResearchComponent = RESEARCH_SIMULATORS[topic]
+  if (ResearchComponent) {
+    return <ResearchComponent topic={topic} simulation={simulation} theory={theory} />
   }
 
-  const shots = 1000
-  const simulatorResult = result?.result
-  const measuredProbabilities = simulatorResult?.probabilities || {}
-  const counts = simulatorResult?.counts || {}
-  const amplitudes = simulatorResult?.amplitudes || {}
-  const preMeasurementAmplitudes = simulatorResult?.pre_measurement_state?.amplitudes || {}
-  const hasMeasurementData = Object.keys(measuredProbabilities).length > 0
-  const hasAmplitudeData = Object.keys(amplitudes).length > 0
-  const hasPreMeasurementState = Object.keys(preMeasurementAmplitudes).length > 0
-  const probabilities = hasMeasurementData ? measuredProbabilities : deriveProbabilities(amplitudes)
-  const resultTitle = hasMeasurementData ? 'Measurement probabilities' : 'State probabilities'
-  const blochState = resolveSingleQubitBlochState({
-    amplitudes: hasAmplitudeData ? amplitudes : preMeasurementAmplitudes,
-    fallbackState: simulation?.initial_state || simulation?.expected_result,
-  })
-  const showBlochSphere =
-    Boolean(blochState) &&
-    (
-      Boolean(theory?.bloch_sphere) ||
-      Boolean(theory?.bloch_sphere_connection) ||
-      !hasOps ||
-      hasAmplitudeData ||
-      hasPreMeasurementState
-    )
-  const blochSourceLabel = hasAmplitudeData
-    ? 'Simulated single-qubit state'
-    : hasPreMeasurementState
-      ? 'State before measurement'
-      : 'Initial single-qubit state'
-  const blochStateLabel = hasAmplitudeData || hasPreMeasurementState
-    ? simulation?.expected_result || simulation?.initial_state
-    : simulation?.initial_state
-  const blochNote = hasPreMeasurementState && hasMeasurementData
-    ? 'Measurement collapses the state, so the sphere shows the qubit right before the measurement step.'
-    : hasOps
-      ? 'Before you run the circuit, the sphere shows the lesson starting state. After a run, it updates to the simulated state.'
-      : 'This lesson does not apply any gates yet, so the sphere shows the starting state directly.'
+  if (simulation.type === 'state_visualization') {
+    return <StateVisualizationLab key={topic} simulation={simulation} />
+  }
+
+  const topicLab = TOPIC_LABS[topic]
+  if (!topicLab) {
+    return <StandardCircuitSimulation key={topic} simulation={simulation} theory={theory} />
+  }
+
+  const TopicComponent = topicLab.Component
+
+  if (topicLab.includeStandard === false) {
+    return <TopicComponent topic={topic} simulation={simulation} theory={theory} />
+  }
 
   return (
     <div className="space-y-6">
-      <div
-        className="flex flex-wrap items-start justify-between gap-4"
-      >
-        <div className="section-heading">
-          <p className="section-eyebrow">Run This Circuit</p>
-          <h3 className="section-title">Simulator controls</h3>
-          <p className="section-subtitle">
-            {hasOps
-              ? 'Run the circuit to inspect the resulting state, amplitudes, measurement probabilities, and Bloch sphere view.'
-              : 'Inspect the lesson starting state, circuit layout, and Bloch sphere picture before any gates are applied.'}
-          </p>
-        </div>
-
-        {hasOps && (
-          <div className="flex items-center gap-2 w-full sm:w-auto">
-            {ran && (
-              <button
-                onClick={reset}
-                className="w-full sm:w-auto"
-                style={secondaryButtonStyle()}
-              >
-                <RotateCcw size={14} />
-                Reset
-              </button>
-            )}
-            <button
-              onClick={runSim}
-              disabled={loading || isAnimating}
-              className="w-full sm:w-auto"
-              style={primaryButtonStyle(loading || isAnimating)}
-            >
-              {loading || isAnimating ? <Loader2 size={14} className="animate-spin" /> : <Play size={14} />}
-              {loading ? 'Fetching...' : isAnimating ? 'Simulating...' : ran ? 'Run again' : 'Run simulation'}
-            </button>
-          </div>
-        )}
-      </div>
-
-      <div className="section-grid" data-columns="3">
-        <div className="value-card">
-          <span className="value-label">Initial state</span>
-          <StatePill value={simulation?.initial_state || '|0>'} />
-        </div>
-        <div className="value-card">
-          <span className="value-label">Expected result</span>
-          <StatePill value={simulation?.expected_result || '?'} />
-        </div>
-        <div className="value-card">
-          <span className="value-label">Operations</span>
-          <p style={{ margin: 0, fontSize: 15, fontWeight: 600, color: 'var(--text-primary)' }}>
-            {ops.length} gate{ops.length === 1 ? '' : 's'}
-          </p>
-          <p className="text-sm mt-2" style={{ color: 'var(--text-secondary)' }}>
-            {hasOps ? ops.map(op => op.gate).join(' -> ') : 'No gates configured for this lesson yet.'}
-          </p>
-        </div>
-      </div>
-
-      <div
-        className="soft-panel p-4 md:p-5"
-      >
-        <header className="mb-5">
-          <p className="section-eyebrow" style={{ marginBottom: 8 }}>Circuit View</p>
-          <h3 className="text-xl md:text-2xl font-bold" style={{ color: 'var(--text-primary)', letterSpacing: '-0.02em' }}>
-            Gate layout
-          </h3>
-        </header>
-        <CircuitRenderer
-          operations={ops}
-          initialState={simulation?.initial_state || '|0>'}
-          activeStep={activeStep}
-        />
-      </div>
-
-      {showBlochSphere && (
-        <div className="soft-panel p-4 md:p-5">
-          <header className="mb-5">
-            <p className="section-eyebrow" style={{ marginBottom: 8 }}>Bloch Sphere</p>
-            <h3 className="text-xl md:text-2xl font-bold" style={{ color: 'var(--text-primary)', letterSpacing: '-0.02em' }}>
-              Single-qubit state view
-            </h3>
-          </header>
-          <BlochSphere
-            state={blochState}
-            sourceLabel={blochSourceLabel}
-            stateLabel={blochStateLabel}
-            note={blochNote}
-          />
-        </div>
-      )}
-
-      {error && (
-        <div
-          className="flex items-start gap-2 p-3 rounded-2xl text-sm"
-          style={{
-            background: 'var(--danger-soft)',
-            border: '1px solid var(--danger-border)',
-            color: 'var(--danger)',
-          }}
-        >
-          {error}
-        </div>
-      )}
-
-      {ran && result?.message && !simulatorResult && (
-        <div
-          className="soft-panel p-4 md:p-5"
-        >
-          <p className="text-sm" style={{ color: 'var(--text-secondary)', margin: 0 }}>
-            {result.message}
-          </p>
-        </div>
-      )}
-
-      {ran && Object.keys(probabilities).length > 0 && (
-        <div
-          className="soft-panel p-4 md:p-5"
-        >
-          <header className="mb-5">
-            <p className="section-eyebrow" style={{ marginBottom: 8 }}>
-              {hasMeasurementData ? 'Measurement output' : 'State analysis'}
-            </p>
-            <h3 className="text-xl md:text-2xl font-bold" style={{ color: 'var(--text-primary)', letterSpacing: '-0.02em' }}>
-              {resultTitle}
-            </h3>
-          </header>
-          <ProbabilityChart probabilities={probabilities} counts={counts} shots={shots} />
-        </div>
-      )}
-
-      {ran && hasAmplitudeData && (
-        <div className="soft-panel p-4 md:p-5">
-          <header className="mb-5">
-            <p className="section-eyebrow" style={{ marginBottom: 8 }}>Statevector output</p>
-            <h3 className="text-xl md:text-2xl font-bold" style={{ color: 'var(--text-primary)', letterSpacing: '-0.02em' }}>
-              Basis amplitudes
-            </h3>
-          </header>
-          <AmplitudeGrid amplitudes={amplitudes} />
-        </div>
-      )}
-
-      {ran && !hasAmplitudeData && !hasMeasurementData && simulatorResult && (
-        <div className="soft-panel p-4 md:p-5">
-          <header className="mb-5">
-            <p className="section-eyebrow" style={{ marginBottom: 8 }}>Raw result</p>
-            <h3 className="text-xl md:text-2xl font-bold" style={{ color: 'var(--text-primary)', letterSpacing: '-0.02em' }}>
-              Backend output
-            </h3>
-          </header>
-          <pre
-            className="font-mono text-sm"
-            style={{ color: 'var(--text-secondary)', whiteSpace: 'pre-wrap', wordBreak: 'break-word', margin: 0 }}
-          >
-            {typeof simulatorResult === 'object'
-              ? JSON.stringify(simulatorResult, null, 2)
-              : String(simulatorResult)}
-          </pre>
-        </div>
-      )}
+      <TopicComponent topic={topic} simulation={simulation} theory={theory} />
+      <StandardCircuitSimulation key={`${topic}-standard`} simulation={simulation} theory={theory} />
     </div>
   )
 }

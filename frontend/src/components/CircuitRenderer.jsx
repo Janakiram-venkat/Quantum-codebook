@@ -11,7 +11,22 @@ const GATE_COLORS = {
   T: { fill: 'var(--gate-z-fill)', shell: 'var(--gate-z-shell)', stroke: 'var(--gate-z-stroke)', label: 'var(--gate-z-label)' },
   CNOT: { fill: 'var(--gate-cnot-fill)', shell: 'var(--gate-cnot-shell)', stroke: 'var(--gate-cnot-stroke)', label: 'var(--gate-cnot-label)' },
   CZ: { fill: 'var(--gate-cnot-fill)', shell: 'var(--gate-cnot-shell)', stroke: 'var(--gate-cnot-stroke)', label: 'var(--gate-cnot-label)' },
+  'CONTROLLED-U': { fill: 'var(--gate-cnot-fill)', shell: '#f6f7ff', stroke: '#5468b9', label: '#2d3f89' },
+  'CONTROLLED-U^2': { fill: 'var(--gate-cnot-fill)', shell: '#f3f5ff', stroke: '#4158b0', label: '#23367f' },
+  'QFT†': { fill: '#eef5ff', shell: '#f8fbff', stroke: '#3166a6', label: '#18487a' },
+  IQFT: { fill: '#eef5ff', shell: '#f8fbff', stroke: '#3166a6', label: '#18487a' },
+  SHIFT_LEFT: { fill: '#edf9f3', shell: '#f5fcf8', stroke: '#2a8b61', label: '#146147' },
+  SHIFT_RIGHT: { fill: '#edf9f3', shell: '#f5fcf8', stroke: '#2a8b61', label: '#146147' },
   MEASURE: { fill: 'var(--gate-measure-fill)', shell: 'var(--gate-measure-shell)', stroke: 'var(--gate-measure-stroke)', label: 'var(--gate-measure-label)' },
+}
+
+const GATE_LABELS = {
+  'CONTROLLED-U': 'CU',
+  'CONTROLLED-U^2': 'CU²',
+  'QFT†': 'QFT†',
+  IQFT: 'QFT†',
+  SHIFT_LEFT: 'SL',
+  SHIFT_RIGHT: 'SR',
 }
 
 const DEFAULT_GATE_COLORS = {
@@ -33,8 +48,26 @@ function getNumQubits(ops) {
   ops.forEach(op => {
     if (op.target !== undefined) max = Math.max(max, op.target)
     if (op.control !== undefined) max = Math.max(max, op.control)
+    if (Array.isArray(op.targets) && op.targets.length > 0) max = Math.max(max, ...op.targets)
+    if (op.target1 !== undefined) max = Math.max(max, op.target1)
+    if (op.target2 !== undefined) max = Math.max(max, op.target2)
   })
   return max + 1
+}
+
+function resolveTargetQubits(op) {
+  if (Array.isArray(op.targets) && op.targets.length > 0) return [...op.targets].sort((a, b) => a - b)
+  if (op.target1 !== undefined && op.target2 !== undefined) return [op.target1, op.target2].sort((a, b) => a - b)
+  if (op.target !== undefined) return [op.target]
+  return []
+}
+
+function resolveGateLabel(gate) {
+  return GATE_LABELS[gate] || gate
+}
+
+function resolveQubitY(qubitIndex) {
+  return WIRE_Y_BASE + qubitIndex * QUBIT_GAP + CELL_H / 2 - 4
 }
 
 export default function CircuitRenderer({ operations = [], initialState = '|0>', activeStep = null, onGateClick }) {
@@ -109,18 +142,21 @@ export default function CircuitRenderer({ operations = [], initialState = '|0>',
 
         {opsByCol.map((op, idx) => {
           const cx = LEFT_PAD + op.col * CELL_W + CELL_W / 2
-          const targetY = WIRE_Y_BASE + op.target * QUBIT_GAP + CELL_H / 2 - 4
+          const targetQubits = resolveTargetQubits(op)
+          const primaryTarget = targetQubits[0] ?? op.target ?? 0
+          const targetY = resolveQubitY(primaryTarget)
           const c = GATE_COLORS[op.gate] || DEFAULT_GATE_COLORS
+          const displayLabel = resolveGateLabel(op.gate)
           const isActive = op.col === activeStep
           
           const gProps = {
-            className: `transition-all duration-300 ${isActive ? 'drop-shadow-[0_0_10px_var(--accent)] brightness-110' : 'drop-shadow-sm hover:drop-shadow-md hover:brightness-105 cursor-pointer'}`,
+            className: `transition-all duration-300 ${isActive ? 'brightness-105' : 'hover:brightness-105 cursor-pointer'}`,
             style: { transformOrigin: `${cx}px ${targetY}px` },
             onClick: () => onGateClick?.(op, idx)
           }
 
           if (op.gate === 'CNOT' && op.control !== undefined) {
-            const controlY = WIRE_Y_BASE + op.control * QUBIT_GAP + CELL_H / 2 - 4
+            const controlY = resolveQubitY(op.control)
             return (
               <g key={idx} {...gProps}>
                 <line
@@ -144,7 +180,7 @@ export default function CircuitRenderer({ operations = [], initialState = '|0>',
           }
 
           if (op.gate === 'CZ' && op.control !== undefined) {
-            const controlY = WIRE_Y_BASE + op.control * QUBIT_GAP + CELL_H / 2 - 4
+            const controlY = resolveQubitY(op.control)
             return (
               <g key={idx} {...gProps}>
                 <line x1={cx} y1={controlY} x2={cx} y2={targetY} stroke={c.stroke} strokeWidth="3" opacity="0.65" />
@@ -152,6 +188,78 @@ export default function CircuitRenderer({ operations = [], initialState = '|0>',
                 <circle cx={cx} cy={targetY} r="10" fill={c.fill} stroke={c.stroke} strokeWidth="2.5" />
                 <text x={cx} y={targetY + 32} textAnchor="middle" fontSize="12" fill={c.stroke} fontFamily="monospace" fontWeight="600">
                   CZ
+                </text>
+              </g>
+            )
+          }
+
+          if (['CONTROLLED-U', 'CONTROLLED-U^2', 'SHIFT_LEFT', 'SHIFT_RIGHT'].includes(op.gate) && op.control !== undefined) {
+            const controlY = resolveQubitY(op.control)
+            return (
+              <g key={idx} {...gProps}>
+                <line
+                  x1={cx}
+                  y1={controlY}
+                  x2={cx}
+                  y2={targetY}
+                  stroke={c.stroke}
+                  strokeWidth="3"
+                  opacity="0.65"
+                />
+                <circle cx={cx} cy={controlY} r="10" fill={c.fill} stroke={c.stroke} strokeWidth="2.5" />
+                <rect
+                  x={cx - 32}
+                  y={targetY - 24}
+                  width={64}
+                  height={48}
+                  rx="11"
+                  fill={c.shell}
+                  stroke={c.stroke}
+                  strokeWidth={isActive ? '3' : '2.5'}
+                />
+                <text
+                  x={cx}
+                  y={targetY + 6}
+                  textAnchor="middle"
+                  fontSize={displayLabel.length > 2 ? '14' : '18'}
+                  fontWeight="700"
+                  fontFamily="monospace"
+                  fill={c.label}
+                >
+                  {displayLabel}
+                </text>
+              </g>
+            )
+          }
+
+          if (['QFT†', 'IQFT'].includes(op.gate) && targetQubits.length > 1) {
+            const startY = resolveQubitY(targetQubits[0])
+            const endY = resolveQubitY(targetQubits[targetQubits.length - 1])
+            const top = startY - 28
+            const height = endY - startY + 56
+
+            return (
+              <g key={idx} {...gProps}>
+                <rect
+                  x={cx - 34}
+                  y={top}
+                  width={68}
+                  height={height}
+                  rx="12"
+                  fill={c.shell}
+                  stroke={c.stroke}
+                  strokeWidth={isActive ? '3' : '2.5'}
+                />
+                <text
+                  x={cx}
+                  y={top + height / 2 + 6}
+                  textAnchor="middle"
+                  fontSize="16"
+                  fontWeight="700"
+                  fontFamily="monospace"
+                  fill={c.label}
+                >
+                  {displayLabel}
                 </text>
               </g>
             )
@@ -205,7 +313,7 @@ export default function CircuitRenderer({ operations = [], initialState = '|0>',
                 fontFamily="monospace"
                 fill={c.label}
               >
-                {op.gate}
+                {displayLabel}
               </text>
             </g>
           )

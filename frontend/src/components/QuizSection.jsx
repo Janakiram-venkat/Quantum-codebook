@@ -1,30 +1,50 @@
+import { CheckCircle, Circle, RotateCcw, Trophy, XCircle } from 'lucide-react'
 import { useState } from 'react'
-import { CheckCircle, XCircle, RotateCcw, Trophy } from 'lucide-react'
-import { normalizeQuantumText } from '../lib/quantumText.js'
+import {
+  isQuantumFormulaLike,
+  normalizeQuantumText,
+  splitLeadingTextFromFormula,
+} from '../lib/quantumText.js'
 import MathText from './MathText'
 
-function optionStyle({ isSelected, isSubmitted, isCorrectOpt, isWrongOpt }) {
-  if (isCorrectOpt && isSubmitted) {
+function renderOptionLetter(index) {
+  return String.fromCharCode(65 + index)
+}
+
+function optionVisualState({ isSelected, isSubmitted, isCorrectOption, isWrongSelection }) {
+  if (isCorrectOption && isSubmitted) {
     return {
       background: 'var(--success-soft)',
-      border: '1px solid var(--success-border)',
+      border: '2px solid var(--success)',
       color: 'var(--success)',
+      badgeBackground: 'rgba(var(--success-rgb), 0.16)',
+      badgeBorder: 'var(--success)',
+      badgeColor: 'var(--success)',
+      label: 'Correct answer',
     }
   }
 
-  if (isWrongOpt) {
+  if (isWrongSelection) {
     return {
       background: 'var(--danger-soft)',
-      border: '1px solid var(--danger-border)',
+      border: '2px solid var(--danger)',
       color: 'var(--danger)',
+      badgeBackground: 'rgba(var(--danger-rgb), 0.14)',
+      badgeBorder: 'var(--danger)',
+      badgeColor: 'var(--danger)',
+      label: 'Your selection',
     }
   }
 
   if (isSelected && !isSubmitted) {
     return {
-      background: 'var(--surface-soft)',
-      border: '1px solid var(--border-hover)',
-      color: 'var(--text-primary)',
+      background: 'rgba(var(--accent-rgb), 0.1)',
+      border: '2px solid var(--accent)',
+      color: 'var(--accent-strong)',
+      badgeBackground: 'rgba(var(--accent-rgb), 0.14)',
+      badgeBorder: 'var(--accent)',
+      badgeColor: 'var(--accent-strong)',
+      label: '',
     }
   }
 
@@ -32,6 +52,10 @@ function optionStyle({ isSelected, isSubmitted, isCorrectOpt, isWrongOpt }) {
     background: 'var(--surface-soft)',
     border: '1px solid var(--border)',
     color: 'var(--text-secondary)',
+    badgeBackground: 'var(--surface-muted)',
+    badgeBorder: 'var(--border)',
+    badgeColor: 'var(--text-muted)',
+    label: '',
   }
 }
 
@@ -42,13 +66,13 @@ export default function QuizSection({ quiz }) {
 
   if (!quiz || quiz.length === 0) return null
 
-  function pickAnswer(qi, option) {
+  function pickAnswer(questionIndex, option) {
     if (submitted) return
-    setAnswers(prev => ({ ...prev, [qi]: option }))
+    setAnswers(prev => ({ ...prev, [questionIndex]: option }))
   }
 
   function submit() {
-    const correct = quiz.filter((q, i) => answers[i] === q.answer).length
+    const correct = quiz.filter((question, index) => answers[index] === question.answer).length
     setScore(correct)
     setSubmitted(true)
   }
@@ -59,58 +83,63 @@ export default function QuizSection({ quiz }) {
     setScore(null)
   }
 
+  function renderQuizText(value) {
+    const normalizedValue = normalizeQuantumText(value)
+    const inlineFormula = splitLeadingTextFromFormula(normalizedValue)
+
+    if (inlineFormula) {
+      return (
+        <>
+          {inlineFormula.prefix}{' '}
+          <MathText value={inlineFormula.formula} />
+        </>
+      )
+    }
+
+    if (isQuantumFormulaLike(normalizedValue)) {
+      return <MathText value={normalizedValue} />
+    }
+
+    return normalizedValue
+  }
+
   const total = quiz.length
-  const allAnswered = Object.keys(answers).length === total
+  const answeredCount = Object.keys(answers).length
+  const allAnswered = answeredCount === total
   const perfect = score === total
 
-  function isFormulaLike(str) {
-    if (!str) return false
-    const s = str.trim()
-    return (
-      (s.startsWith('|') && (s.includes('⟩') || s.includes('>'))) ||
-      (s.includes('(') && s.includes(') /')) ||
-      s.includes('√') ||
-      s.includes('⊗') ||
-      s.includes('[[') ||
-      /^O\(.*?\)$/.test(s) ||
-      /^[\d\+\-\*\/\(\)\s\.\^\_]+$/.test(s)
-    )
-  }
-
-  function renderQuizText(value) {
-    const norm = normalizeQuantumText(value)
-    if (isFormulaLike(norm)) {
-      return <MathText value={norm} />
-    }
-    return norm
-  }
-
   return (
-    <div className="space-y-10">
+    <div className="space-y-6">
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div className="section-heading">
           <p className="section-eyebrow">Review</p>
           <h3 className="section-title">Answer the quiz</h3>
           <p className="section-subtitle">
-            Answer each question and submit when you are ready.
+            Each question uses one clear answer card so the selected choice, correctness, and explanation are easy to scan.
           </p>
         </div>
 
-        {submitted && (
-          <button
-            onClick={reset}
-            className="flex items-center gap-2 text-base px-4 py-2.5 rounded-xl transition-all"
-            style={{
-              background: 'var(--surface-soft)',
-              border: '1px solid var(--border)',
-              color: 'var(--text-secondary)',
-              cursor: 'pointer',
-            }}
-          >
-            <RotateCcw size={14} />
-            Retry quiz
-          </button>
-        )}
+        <div className="flex flex-wrap items-center gap-2">
+          <span className="soft-badge">
+            {submitted ? `${score}/${total} correct` : `${answeredCount}/${total} answered`}
+          </span>
+          {submitted && (
+            <button
+              type="button"
+              onClick={reset}
+              className="flex items-center gap-2 text-base px-4 py-2.5 rounded-xl transition-all"
+              style={{
+                background: 'var(--surface-soft)',
+                border: '1px solid var(--border)',
+                color: 'var(--text-secondary)',
+                cursor: 'pointer',
+              }}
+            >
+              <RotateCcw size={14} />
+              Retry quiz
+            </button>
+          )}
+        </div>
       </div>
 
       {submitted && (
@@ -128,75 +157,272 @@ export default function QuizSection({ quiz }) {
             </p>
             <p className="text-sm mt-1" style={{ color: 'var(--text-muted)', lineHeight: 1.7 }}>
               {perfect
-                ? 'You have a solid understanding of this lesson.'
-                : `Review the missed question${total - score > 1 ? 's' : ''} and try again when ready.`}
+                ? 'You have a strong grasp of this lesson.'
+                : `Review the explanations below, then retry when you want another pass.`}
             </p>
           </div>
         </div>
       )}
 
-      <div className="space-y-16">
-        {quiz.map((q, qi) => {
-          const selected = answers[qi]
-          const isCorrect = submitted && selected === q.answer
-          const isWrong = submitted && selected !== undefined && selected !== q.answer
+      <div className="flex flex-wrap gap-2">
+        {quiz.map((question, questionIndex) => {
+          const selectedAnswer = answers[questionIndex]
+          const answered = selectedAnswer !== undefined
+          const correct = submitted && selectedAnswer === question.answer
+          const incorrect = submitted && answered && selectedAnswer !== question.answer
+
+          return (
+            <span
+              key={questionIndex}
+              style={{
+                borderRadius: 999,
+                padding: '7px 11px',
+                fontSize: 11,
+                fontWeight: 700,
+                letterSpacing: '0.08em',
+                textTransform: 'uppercase',
+                background: submitted
+                  ? correct
+                    ? 'var(--success-soft)'
+                    : incorrect
+                      ? 'var(--danger-soft)'
+                      : 'var(--surface-muted)'
+                  : answered
+                    ? 'rgba(var(--accent-rgb), 0.08)'
+                    : 'var(--surface-muted)',
+                color: submitted
+                  ? correct
+                    ? 'var(--success)'
+                    : incorrect
+                      ? 'var(--danger)'
+                      : 'var(--text-muted)'
+                  : answered
+                    ? 'var(--accent-strong)'
+                    : 'var(--text-muted)',
+                border: `1px solid ${
+                  submitted
+                    ? correct
+                      ? 'var(--success-border)'
+                      : incorrect
+                        ? 'var(--danger-border)'
+                        : 'var(--border)'
+                    : answered
+                      ? 'rgba(var(--accent-rgb), 0.2)'
+                      : 'var(--border)'
+                }`,
+              }}
+            >
+              Q{questionIndex + 1}
+            </span>
+          )
+        })}
+      </div>
+
+      <div className="space-y-5">
+        {quiz.map((question, questionIndex) => {
+          const selectedAnswer = answers[questionIndex]
+          const answered = selectedAnswer !== undefined
+          const isCorrectSelection = submitted && selectedAnswer === question.answer
+          const isWrongSelection = submitted && answered && selectedAnswer !== question.answer
 
           return (
             <section
-              key={qi}
-              className={qi > 0 ? 'pt-12' : ''}
-              style={qi > 0 ? { borderTop: '1px solid var(--rule)' } : undefined}
+              key={questionIndex}
+              className="soft-panel p-4 md:p-5"
+              style={{
+                borderColor: answered && !submitted ? 'rgba(var(--accent-rgb), 0.18)' : 'var(--border)',
+              }}
             >
-              <div className="mb-8">
-                <p
-                  className="text-[14px] font-bold uppercase mb-3"
-                  style={{ color: 'var(--text-muted)', letterSpacing: '0.16em' }}
-                >
-                  Question {qi + 1}
-                </p>
-                <p className="text-[19px] font-medium" style={{ color: 'var(--text-primary)', lineHeight: 1.8 }}>
-                  {renderQuizText(q.question)}
-                </p>
-                {submitted && (
-                  <p className="text-sm mt-2" style={{ color: isCorrect ? 'var(--success)' : isWrong ? 'var(--danger)' : 'var(--text-muted)' }}>
-                    {isCorrect && 'Correct answer selected.'}
-                    {isWrong && (
-                      <>
-                        Correct answer:{' '}
-                        {renderQuizText(q.answer)}
-                      </>
-                    )}
-                    {!isCorrect && !isWrong && 'Question not answered.'}
+              <div className="flex flex-wrap items-start justify-between gap-3 mb-5">
+                <div style={{ maxWidth: 760 }}>
+                  <div className="flex flex-wrap items-center gap-2 mb-3">
+                    <span
+                      style={{
+                        borderRadius: 999,
+                        padding: '5px 10px',
+                        fontSize: 11,
+                        fontWeight: 700,
+                        letterSpacing: '0.08em',
+                        textTransform: 'uppercase',
+                        background: 'var(--surface-muted)',
+                        color: 'var(--text-muted)',
+                        border: '1px solid var(--border)',
+                      }}
+                    >
+                      Question {questionIndex + 1}
+                    </span>
+                    <span
+                      style={{
+                        borderRadius: 999,
+                        padding: '5px 10px',
+                        fontSize: 11,
+                        fontWeight: 700,
+                        letterSpacing: '0.08em',
+                        textTransform: 'uppercase',
+                        background: submitted
+                          ? isCorrectSelection
+                            ? 'var(--success-soft)'
+                            : isWrongSelection
+                              ? 'var(--danger-soft)'
+                              : 'var(--surface-muted)'
+                          : answered
+                            ? 'rgba(var(--accent-rgb), 0.08)'
+                            : 'var(--surface-muted)',
+                        color: submitted
+                          ? isCorrectSelection
+                            ? 'var(--success)'
+                            : isWrongSelection
+                              ? 'var(--danger)'
+                              : 'var(--text-muted)'
+                          : answered
+                            ? 'var(--accent-strong)'
+                            : 'var(--text-muted)',
+                        border: `1px solid ${
+                          submitted
+                            ? isCorrectSelection
+                              ? 'var(--success-border)'
+                              : isWrongSelection
+                                ? 'var(--danger-border)'
+                                : 'var(--border)'
+                            : answered
+                              ? 'rgba(var(--accent-rgb), 0.2)'
+                              : 'var(--border)'
+                        }`,
+                      }}
+                    >
+                      {submitted
+                        ? isCorrectSelection
+                          ? 'Correct'
+                          : isWrongSelection
+                            ? 'Incorrect'
+                            : 'Skipped'
+                        : answered
+                          ? 'Answered'
+                          : 'Waiting'}
+                    </span>
+                  </div>
+
+                  <p className="text-[17px] font-medium" style={{ color: 'var(--text-primary)', lineHeight: 1.7 }}>
+                    {renderQuizText(question.question)}
                   </p>
-                )}
+                </div>
               </div>
 
-              <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
-                {q.options.map(opt => {
-                  const isSelected = selected === opt
-                  const isCorrectOpt = submitted && opt === q.answer
-                  const isWrongOpt = submitted && isSelected && !isCorrectOpt
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                {question.options.map((option, optionIndex) => {
+                  const isSelected = selectedAnswer === option
+                  const isCorrectOption = submitted && option === question.answer
+                  const isWrongOption = submitted && isSelected && !isCorrectOption
+                  const visualState = optionVisualState({
+                    isSelected,
+                    isSubmitted: submitted,
+                    isCorrectOption,
+                    isWrongSelection: isWrongOption,
+                  })
 
                   return (
                     <button
-                      key={opt}
-                      onClick={() => pickAnswer(qi, opt)}
-                      className="text-left px-8 py-6 rounded-2xl text-[18px] transition-all duration-150 w-full flex items-center gap-4"
+                      key={option}
+                      type="button"
+                      onClick={() => pickAnswer(questionIndex, option)}
+                      disabled={submitted}
+                      className="w-full text-left transition-all duration-150"
                       style={{
-                        ...optionStyle({ isSelected, isSubmitted: submitted, isCorrectOpt, isWrongOpt }),
+                        borderRadius: 18,
+                        padding: '14px 16px',
+                        background: visualState.background,
+                        border: visualState.border,
+                        color: visualState.color,
                         cursor: submitted ? 'default' : 'pointer',
-                        lineHeight: 1.7,
                       }}
                     >
-                      {submitted && isCorrectOpt && <CheckCircle size={14} color="var(--success)" className="flex-shrink-0" />}
-                      {submitted && isWrongOpt && <XCircle size={14} color="var(--danger)" className="flex-shrink-0" />}
-                      <span style={{ flex: 1 }}>
-                        {renderQuizText(opt)}
-                      </span>
+                      <div className="flex items-start gap-4">
+                        <span
+                          style={{
+                            width: 34,
+                            height: 34,
+                            minWidth: 34,
+                            borderRadius: 999,
+                            border: `1px solid ${visualState.badgeBorder}`,
+                            background: visualState.badgeBackground,
+                            color: visualState.badgeColor,
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            fontWeight: 800,
+                            fontSize: 13,
+                            fontFamily: 'var(--font-mono)',
+                          }}
+                        >
+                          {renderOptionLetter(optionIndex)}
+                        </span>
+
+                        <div style={{ flex: 1 }}>
+                          <div className="flex flex-wrap items-center justify-between gap-3">
+                            <span style={{ color: 'var(--text-primary)', lineHeight: 1.7 }}>
+                              {renderQuizText(option)}
+                            </span>
+                            <span style={{ display: 'inline-flex', alignItems: 'center', gap: 8 }}>
+                              {submitted && isCorrectOption && <CheckCircle size={16} color="var(--success)" />}
+                              {submitted && isWrongOption && <XCircle size={16} color="var(--danger)" />}
+                              {!submitted && (
+                                isSelected
+                                  ? <CheckCircle size={16} color="var(--accent)" />
+                                  : <Circle size={16} color="var(--text-muted)" />
+                              )}
+                            </span>
+                          </div>
+
+                          {visualState.label && (
+                            <p
+                              style={{
+                                margin: '8px 0 0',
+                                fontSize: 12,
+                                fontWeight: 700,
+                                letterSpacing: '0.06em',
+                                textTransform: 'uppercase',
+                                color: visualState.color,
+                              }}
+                            >
+                              {visualState.label}
+                            </p>
+                          )}
+                        </div>
+                      </div>
                     </button>
                   )
                 })}
               </div>
+
+              {submitted && (
+                <div
+                  style={{
+                    marginTop: 16,
+                    borderRadius: 16,
+                    padding: '14px 16px',
+                    background: isCorrectSelection ? 'var(--success-soft)' : 'var(--surface-soft)',
+                    border: `1px solid ${isCorrectSelection ? 'var(--success-border)' : 'var(--border)'}`,
+                  }}
+                >
+                  {!answered && (
+                    <p style={{ margin: 0, color: 'var(--text-secondary)', fontSize: 14, lineHeight: 1.7 }}>
+                      You skipped this one. The correct answer was <strong>{renderQuizText(question.answer)}</strong>.
+                    </p>
+                  )}
+
+                  {answered && !isCorrectSelection && (
+                    <p style={{ margin: 0, color: 'var(--text-secondary)', fontSize: 14, lineHeight: 1.7 }}>
+                      Correct answer: <strong>{renderQuizText(question.answer)}</strong>
+                    </p>
+                  )}
+
+                  {question.explanation && (
+                    <p style={{ margin: answered ? '10px 0 0' : '10px 0 0', color: 'var(--text-secondary)', fontSize: 14, lineHeight: 1.75 }}>
+                      {renderQuizText(question.explanation)}
+                    </p>
+                  )}
+                </div>
+              )}
             </section>
           )
         })}
@@ -204,6 +430,7 @@ export default function QuizSection({ quiz }) {
 
       {!submitted && (
         <button
+          type="button"
           onClick={submit}
           disabled={!allAnswered}
           className="px-5 py-3 rounded-xl text-sm font-semibold transition-all duration-200"

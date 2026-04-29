@@ -4,17 +4,29 @@ import axios from 'axios'
 import { BookOpen, ArrowRight, Loader2, AlertCircle } from 'lucide-react'
 
 const levelMeta = {
-  begainner: {
+  beginner: {
     label: 'Beginner',
     color: 'var(--accent)',
     bg: 'var(--accent-dim)',
     border: 'var(--accent-border-soft)',
   },
-  intermidiate: {
+  intermediate: {
     label: 'Intermediate',
     color: 'var(--accent)',
     bg: 'var(--accent-dim)',
     border: 'var(--accent-border-soft)',
+  },
+  advance: {
+    label: 'Advance',
+    color: 'var(--accent)',
+    bg: 'var(--accent-dim)',
+    border: 'var(--accent-border-soft)',
+  },
+  research: {
+    label: 'Research',
+    color: 'rgb(45, 212, 191)', // teal innovation theme
+    bg: 'rgba(45, 212, 191, 0.12)',
+    border: 'rgba(45, 212, 191, 0.3)',
   },
 }
 
@@ -46,9 +58,9 @@ export default function Track() {
   }
 
   const beginnerTopics = [
-    { id: 'QubitsAndStates', label: 'Qubits and States' },
-    { id: 'singleGates', label: 'Single Gates' },
-    { id: 'Mesurement', label: 'Measurement' },
+    { id: 'qubits_states', label: 'Qubits and States' },
+    { id: 'single_gates', label: 'Single Gates' },
+    { id: 'measurement', label: 'Measurement' },
     { id: 'superposition', label: 'Superposition' },
     { id: 'entanglement', label: 'Entanglement' },
   ]
@@ -59,10 +71,27 @@ export default function Track() {
     { id: 'grovers_algorithm', label: "Grover's Algorithm" },
     { id: 'vqe', label: 'Variational Quantum Eigen Solver' },
     { id: 'noise_model', label: 'Noise Model' },
-    { id: 'quantum_error_corection', label: 'Quantum Error Correction' },
+    { id: 'quantum_error_correction', label: 'Quantum Error Correction' },
   ]
 
-  const lessonOrder = level === 'intermidiate' ? intermediateTopics : beginnerTopics
+  const advanceTopics = [
+    { id: 'shors_algorithm', label: "Shor's Algorithm" },
+    { id: 'hamiltonian_simulation', label: 'Hamiltonian Simulation' },
+    { id: 'qaoa', label: 'QAOA' },
+    { id: 'quantum_walks', label: 'Quantum Walks' },
+    { id: 'surface_code', label: 'Surface Codes' },
+  ]
+
+  const researchTopics = [
+    { id: 'variational_quantum_algorithms', label: 'Variational Quantum Algorithms' },
+    { id: 'quantum_machine_learning', label: 'Quantum Machine Learning' },
+    { id: 'topological_quantum_computing', label: 'Topological Quantum Computing' },
+    { id: 'quantum_chemistry', label: 'Quantum Chemistry' },
+    { id: 'fault_tolerant_quantum_computing', label: 'Fault Tolerant Quantum Computing' },
+    { id: 'quantum_networking', label: 'Quantum Networking' },
+  ]
+
+  const lessonOrder = level === 'research' ? researchTopics : level === 'advance' ? advanceTopics : level === 'intermediate' ? intermediateTopics : beginnerTopics
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
@@ -90,8 +119,8 @@ export default function Track() {
             className="w-12 h-12 rounded-2xl flex items-center justify-center"
             style={{ background: meta.bg, border: `1px solid ${meta.border}` }}
           >
-          <BookOpen size={20} color={meta.color} />
-        </div>
+            <BookOpen size={20} color={meta.color} />
+          </div>
           <div>
             <p className="section-eyebrow" style={{ marginBottom: 6 }}>Learning Path</p>
             <h1 className="text-[30px] md:text-[34px] font-bold" style={{ color: 'var(--text-primary)', letterSpacing: '-0.03em' }}>
@@ -139,20 +168,17 @@ export default function Track() {
               <li key={slug}>
                 <Link
                   to={`/lesson/${slug}`}
-                  className="flex items-center gap-4 px-5 py-4 rounded-xl transition-all duration-200 group"
+                  className="flex items-center gap-4 px-2 py-4 transition-all duration-200 group"
                   style={{
-                    background: 'var(--bg-card)',
-                    border: '1px solid var(--border)',
-                    boxShadow: 'var(--card-shadow)',
+                    background: 'transparent',
+                    borderBottom: '1px solid var(--rule)',
                     textDecoration: 'none',
                   }}
                   onMouseEnter={e => {
-                    e.currentTarget.style.borderColor = `${meta.color}55`
-                    e.currentTarget.style.background = meta.bg
+                    e.currentTarget.style.background = 'var(--surface-muted)'
                   }}
                   onMouseLeave={e => {
-                    e.currentTarget.style.borderColor = 'var(--border)'
-                    e.currentTarget.style.background = 'var(--bg-card)'
+                    e.currentTarget.style.background = 'transparent'
                   }}
                 >
                   <span

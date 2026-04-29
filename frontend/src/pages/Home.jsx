@@ -3,9 +3,9 @@ import { ArrowRight } from 'lucide-react'
 import { BRAND_NAME, PRODUCT_NAME, brandLogo } from '../lib/branding.js'
 
 const beginnerTopics = [
-  { id: 'QubitsAndStates', label: 'Qubits and States' },
-  { id: 'singleGates', label: 'Single Gates' },
-  { id: 'Mesurement', label: 'Measurement' },
+  { id: 'qubits_states', label: 'Qubits and States' },
+  { id: 'single_gates', label: 'Single Gates' },
+  { id: 'measurement', label: 'Measurement' },
   { id: 'superposition', label: 'Superposition' },
   { id: 'entanglement', label: 'Entanglement' },
 ]
@@ -16,7 +16,24 @@ const intermediateTopics = [
   { id: 'grovers_algorithm', label: "Grover's Algorithm" },
   { id: 'vqe', label: 'Variational Quantum Eigen Solver' },
   { id: 'noise_model', label: 'Noise Model' },
-  { id: 'quantum_error_corection', label: 'Quantum Error Correction' },
+  { id: 'quantum_error_correction', label: 'Quantum Error Correction' },
+]
+
+const advanceTopics = [
+  { id: 'shors_algorithm', label: "Shor's Algorithm" },
+  { id: 'hamiltonian_simulation', label: 'Hamiltonian Simulation' },
+  { id: 'qaoa', label: 'QAOA' },
+  { id: 'quantum_walks', label: 'Quantum Walks' },
+  { id: 'surface_code', label: 'Surface Codes' },
+]
+
+const researchTopics = [
+  { id: 'variational_quantum_algorithms', label: 'Variational Quantum Algorithms' },
+  { id: 'quantum_machine_learning', label: 'Quantum Machine Learning' },
+  { id: 'topological_quantum_computing', label: 'Topological Quantum Computing' },
+  { id: 'quantum_chemistry', label: 'Quantum Chemistry' },
+  { id: 'fault_tolerant_quantum_computing', label: 'Fault Tolerant Quantum Computing' },
+  { id: 'quantum_networking', label: 'Quantum Networking' },
 ]
 
 const tracks = [
@@ -123,7 +140,7 @@ export default function Home() {
                 onMouseLeave={event => (event.currentTarget.style.color = 'var(--text-secondary)')}
               >
                 <span style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                  <span style={{ fontSize: 11, color: 'var(--text-muted)', fontFamily: 'JetBrains Mono, monospace', minWidth: 18 }}>
+                  <span style={{ fontSize: 11, color: 'var(--text-muted)', fontFamily: 'var(--font-mono)', minWidth: 18 }}>
                     {String(index + 1).padStart(2, '0')}
                   </span>
                   {label}
@@ -135,7 +152,7 @@ export default function Home() {
         </ul>
 
         <Link
-          to="/lesson/QubitsAndStates"
+          to="/lesson/qubits_states"
           style={{
             display: 'inline-flex',
             alignItems: 'center',
@@ -191,7 +208,7 @@ export default function Home() {
                 onMouseLeave={event => (event.currentTarget.style.color = 'var(--text-secondary)')}
               >
                 <span style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                  <span style={{ fontSize: 11, color: 'var(--text-muted)', fontFamily: 'JetBrains Mono, monospace', minWidth: 18 }}>
+                  <span style={{ fontSize: 11, color: 'var(--text-muted)', fontFamily: 'var(--font-mono)', minWidth: 18 }}>
                     {String(index + 1).padStart(2, '0')}
                   </span>
                   {label}
@@ -222,6 +239,142 @@ export default function Home() {
           onMouseLeave={event => (event.currentTarget.style.borderColor = 'var(--border)')}
         >
           Continue Learning <ArrowRight size={13} />
+        </Link>
+      </div>
+
+      <div
+        className="section-shell"
+        style={{
+          marginBottom: 16,
+        }}
+      >
+        <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', marginBottom: 18 }}>
+          <div>
+            <p className="section-eyebrow" style={{ marginBottom: 8 }}>And Beyond</p>
+            <h2 style={{ fontSize: 22, fontWeight: 700, color: 'var(--text-primary)', marginBottom: 6, letterSpacing: '-0.03em' }}>Advance lessons</h2>
+            <p style={{ fontSize: 14, color: 'var(--text-secondary)' }}>Dive deep into state-of-the-art topics like QAOA, Shor's algorithm, and Surface Codes.</p>
+          </div>
+        </div>
+
+        <ul style={{ listStyle: 'none', padding: 0, margin: '0 0 20px' }}>
+          {advanceTopics.map(({ id, label }, index) => (
+            <li key={id} style={{ borderTop: index === 0 ? '1px solid var(--border)' : 'none' }}>
+              <Link
+                to={`/lesson/${id}`}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  padding: '11px 4px',
+                  borderBottom: '1px solid var(--border)',
+                  textDecoration: 'none',
+                  color: 'var(--text-secondary)',
+                  fontSize: 14,
+                  transition: 'color 0.15s',
+                }}
+                onMouseEnter={event => (event.currentTarget.style.color = 'var(--text-primary)')}
+                onMouseLeave={event => (event.currentTarget.style.color = 'var(--text-secondary)')}
+              >
+                <span style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                  <span style={{ fontSize: 11, color: 'var(--text-muted)', fontFamily: 'var(--font-mono)', minWidth: 18 }}>
+                    {String(index + 1).padStart(2, '0')}
+                  </span>
+                  {label}
+                </span>
+                <ArrowRight size={13} style={{ color: 'var(--text-muted)', flexShrink: 0 }} />
+              </Link>
+            </li>
+          ))}
+        </ul>
+
+        <Link
+          to="/lesson/shors_algorithm"
+          style={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: 6,
+            fontSize: 13,
+            fontWeight: 500,
+            color: 'var(--text-primary)',
+            textDecoration: 'none',
+            padding: '8px 14px',
+            border: '1px solid var(--border)',
+            borderRadius: 8,
+            background: 'var(--surface-soft)',
+            transition: 'border-color 0.15s',
+          }}
+          onMouseEnter={event => (event.currentTarget.style.borderColor = 'var(--border-hover)')}
+          onMouseLeave={event => (event.currentTarget.style.borderColor = 'var(--border)')}
+        >
+          Start Advance <ArrowRight size={13} />
+        </Link>
+      </div>
+
+      <div
+        className="section-shell"
+        style={{
+          marginBottom: 16,
+        }}
+      >
+        <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', marginBottom: 18 }}>
+          <div>
+            <p className="section-eyebrow" style={{ marginBottom: 8 }}>Deep Innovation</p>
+            <h2 style={{ fontSize: 22, fontWeight: 700, color: 'var(--text-primary)', marginBottom: 6, letterSpacing: '-0.03em' }}>Research track</h2>
+            <p style={{ fontSize: 14, color: 'var(--text-secondary)' }}>Explore interactive, state-of-the-art simulators covering active research frontiers.</p>
+          </div>
+        </div>
+
+        <ul style={{ listStyle: 'none', padding: 0, margin: '0 0 20px' }}>
+          {researchTopics.map(({ id, label }, index) => (
+            <li key={id} style={{ borderTop: index === 0 ? '1px solid var(--border)' : 'none' }}>
+              <Link
+                to={`/lesson/${id}?level=research`}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  padding: '11px 4px',
+                  borderBottom: '1px solid var(--border)',
+                  textDecoration: 'none',
+                  color: 'var(--text-secondary)',
+                  fontSize: 14,
+                  transition: 'color 0.15s',
+                }}
+                onMouseEnter={event => (event.currentTarget.style.color = 'var(--text-primary)')}
+                onMouseLeave={event => (event.currentTarget.style.color = 'var(--text-secondary)')}
+              >
+                <span style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                  <span style={{ fontSize: 11, color: 'var(--text-muted)', fontFamily: 'var(--font-mono)', minWidth: 18 }}>
+                    {String(index + 1).padStart(2, '0')}
+                  </span>
+                  {label}
+                </span>
+                <ArrowRight size={13} style={{ color: 'var(--text-muted)', flexShrink: 0 }} />
+              </Link>
+            </li>
+          ))}
+        </ul>
+
+        <Link
+          to="/lesson/variational_quantum_algorithms?level=research"
+          style={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: 6,
+            fontSize: 13,
+            fontWeight: 500,
+            color: 'var(--text-primary)',
+            textDecoration: 'none',
+            padding: '8px 14px',
+            border: '1px solid var(--border)',
+            borderRadius: 8,
+            background: 'var(--surface-soft)',
+            transition: 'border-color 0.15s',
+          }}
+          onMouseEnter={event => (event.currentTarget.style.borderColor = 'var(--border-hover)')}
+          onMouseLeave={event => (event.currentTarget.style.borderColor = 'var(--border)')}
+        >
+          Start Research <ArrowRight size={13} />
         </Link>
       </div>
     </div>

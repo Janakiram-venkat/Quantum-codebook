@@ -1,0 +1,180 @@
+{
+  "id": "noise_model",
+  "title": "Quantum Noise Models",
+  "level": "intermediate",
+  "theory": {
+    "introduction": "Real qubits never evolve in complete isolation. The environment leaks information, hardware drifts over time, and measurements are imperfect. A noise model gives us a structured way to describe how those physical imperfections distort an otherwise ideal quantum state.",
+    "why_it_matters": "Noise is the reason near-term quantum hardware cannot simply run deep circuits forever. If you understand what kind of error is happening, you can choose a better circuit, a better measurement basis, or an error-correction strategy that targets the real weakness instead of guessing.",
+    "core_idea": "A noise model is a mathematical rule for how an ideal state changes after an unwanted physical process. Different models damage different parts of the Bloch vector: some change classical populations, some erase phase information, and some do both.",
+    "key_points": [
+      "Noise acts on amplitudes before you ever see the final measurement result.",
+      "Bit-flip and phase-flip errors are different even when one basis hides the difference.",
+      "Depolarizing noise shrinks the state toward a fully random mixture.",
+      "Amplitude damping models energy relaxation from |1> toward |0>.",
+      "Choosing the right measurement basis is often the difference between seeing the error and missing it."
+    ],
+    "types_of_noise": {
+      "bit_flip": {
+        "description": "A bit-flip channel applies an X-like error with probability p, swapping |0> and |1> information.",
+        "effect": "Changes populations in the computational basis.",
+        "analogy": "Like a classical wire that occasionally turns a 0 into a 1.",
+        "importance": "Important for storage and readout because it directly changes the classical answer."
+      },
+      "phase_flip": {
+        "description": "A phase-flip channel applies a Z-like error with probability p, changing relative phase but not computational-basis populations.",
+        "effect": "Leaves Z-basis counts unchanged for many states while destroying interference.",
+        "analogy": "The wave still has the same size, but one branch now points the wrong way.",
+        "importance": "Critical in superposition-heavy algorithms because interference depends on phase being correct."
+      },
+      "depolarizing": {
+        "description": "Depolarizing noise mixes the state with randomness, pushing the Bloch vector toward the center.",
+        "effect": "Reduces confidence in every direction at once.",
+        "analogy": "Instead of nudging the state one specific way, it blurs the whole picture.",
+        "importance": "Useful as a compact model for many small imperfections acting together."
+      },
+      "amplitude_damping": {
+        "description": "Amplitude damping models energy relaxation. The |1> component decays toward |0> over time.",
+        "effect": "Pulls the Bloch vector upward toward |0> while also shrinking transverse coherence.",
+        "analogy": "Like an excited atom emitting energy and falling back to its ground state.",
+        "importance": "One of the most realistic channels for superconducting and trapped-ion style hardware."
+      }
+    },
+    "mathematical_representation": {
+      "bit_flip_channel": "rho' = (1-p) rho + p X rho X",
+      "phase_flip_channel": "rho' = (1-p) rho + p Z rho Z",
+      "depolarizing_channel": "rho' = (1-p) rho + p I / 2",
+      "amplitude_damping": "Excited-state population relaxes toward |0> with probability p."
+    },
+    "sections": [
+      {
+        "title": "Where Noise Comes From",
+        "content": [
+          "Control pulses are never perfect.",
+          "Qubits couple weakly to their environment.",
+          "Measurement electronics add readout error.",
+          "Longer circuits accumulate more opportunities for decoherence."
+        ]
+      },
+      {
+        "title": "Why Basis Choice Matters",
+        "content": [
+          "A phase flip on |+> may look invisible in the Z basis because probabilities stay 50/50.",
+          "The same phase flip becomes obvious in the X basis because |+> turns into |->.",
+          "Noise is not just about the final bit count. It is also about what happens to coherence."
+        ],
+        "intuition": "If you only look in one basis, some errors can hide in plain sight."
+      },
+      {
+        "title": "How To Fight Noise",
+        "content": [
+          "Shorter circuits reduce exposure time.",
+          "Calibration keeps gate errors smaller.",
+          "Error mitigation estimates and subtracts some noise effects.",
+          "Quantum error correction spreads information across many qubits so a single fault can be detected."
+        ],
+        "important_note": "Noise cannot be removed by wishful thinking. It has to be modeled, measured, and engineered around."
+      }
+    ]
+  },
+  "examples": [
+    {
+      "title": "Bit flip on |0>",
+      "description": "Start in |0> and apply a bit-flip channel with error probability p.",
+      "steps": [
+        "With probability 1-p, the state stays |0>.",
+        "With probability p, the state flips to |1>."
+      ],
+      "result": "Z-basis probabilities become P(0) = 1-p and P(1) = p.",
+      "insight": "This looks very classical because the error changes the observed bit directly."
+    },
+    {
+      "title": "Phase flip on |+>",
+      "description": "Start in |+> = (|0> + |1>) / sqrt(2) and apply a phase-flip channel.",
+      "steps": [
+        "The Z basis still shows 50/50 because populations did not move.",
+        "The X basis changes because |+> can become |-> after a Z-like phase error."
+      ],
+      "result": "Interference is damaged even when the computational-basis histogram looks unchanged.",
+      "insight": "Phase noise is easy to underestimate if you only watch classical counts."
+    }
+  ],
+  "applications": [
+    "Choosing realistic hardware benchmarks",
+    "Designing better pulse schedules",
+    "Planning error-mitigation strategies",
+    "Building quantum error-correction codes"
+  ],
+  "limitations": [
+    "A simple noise model is still only an approximation of real hardware.",
+    "Different qubits on the same chip can have different error rates.",
+    "Correlated noise is harder to model than independent single-qubit errors."
+  ],
+  "summary": "Noise models let us talk about hardware imperfections in a precise way. They explain whether an error changes classical outcomes, destroys phase information, or pushes the whole state toward randomness.",
+  "difficulty": "medium",
+  "estimated_time": "25-35 minutes",
+  "prerequisites": [
+    "Qubits and States",
+    "Single Gates",
+    "Superposition",
+    "Measurement"
+  ],
+  "simulation": {
+    "type": "noise_model_lab",
+    "section_title": "Noise playground",
+    "section_subtitle": "Compare how different channels distort the same qubit state and see why some errors only appear once you inspect the right basis.",
+    "default_state": "|+>",
+    "default_noise": "phase_flip",
+    "default_strength": 0.25,
+    "try_this": [
+      "Compare phase flip on |+> in the Z basis and X basis.",
+      "Use amplitude damping on |1> and watch the Bloch point drift toward |0>.",
+      "Increase depolarizing strength and watch the state shrink toward the center."
+    ]
+  },
+  "quiz": [
+    {
+      "question": "Which noise model directly swaps |0> and |1> information?",
+      "options": [
+        "Phase flip",
+        "Bit flip",
+        "Depolarizing",
+        "Amplitude damping"
+      ],
+      "answer": "Bit flip",
+      "explanation": "A bit-flip channel acts like an unwanted X error, so it changes the computational-basis population directly."
+    },
+    {
+      "question": "Why can phase noise look invisible in the Z basis?",
+      "options": [
+        "Because phase noise only affects the X and Y information, not always the Z-basis populations",
+        "Because the measurement device ignores all noise",
+        "Because phase noise is always corrected automatically",
+        "Because Z-basis measurement is random"
+      ],
+      "answer": "Because phase noise only affects the X and Y information, not always the Z-basis populations",
+      "explanation": "Relative phase can change while the probability of measuring 0 or 1 stays the same, so the damage appears only when you inspect coherence-sensitive bases."
+    },
+    {
+      "question": "What does depolarizing noise do to the Bloch vector?",
+      "options": [
+        "Rotates it perfectly around the Z axis",
+        "Shrinks it toward the center",
+        "Pushes it directly to |1>",
+        "Leaves it unchanged"
+      ],
+      "answer": "Shrinks it toward the center",
+      "explanation": "Depolarizing noise mixes the state with randomness, so the Bloch vector loses length and drifts toward the origin."
+    },
+    {
+      "question": "Which channel best models energy relaxation from |1> back to |0>?",
+      "options": [
+        "Bit flip",
+        "Phase flip",
+        "Amplitude damping",
+        "Depolarizing"
+      ],
+      "answer": "Amplitude damping",
+      "explanation": "Amplitude damping captures the physical idea of an excited qubit losing energy and relaxing toward its ground state."
+    }
+  ]
+}

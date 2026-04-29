@@ -170,15 +170,34 @@ export function resolveSingleQubitBlochState({ amplitudes, fallbackState }) {
 export function getBlochVector(state) {
   if (!state) return null
 
+  if (state.vector) {
+    const x = Number(state.vector.x || 0)
+    const y = Number(state.vector.y || 0)
+    const z = Number(state.vector.z || 0)
+    const clampedZ = Math.max(-1, Math.min(1, z))
+    const length = Math.sqrt(x * x + y * y + z * z)
+
+    return {
+      x,
+      y,
+      z,
+      length,
+      theta: Math.acos(clampedZ),
+      phi: Math.atan2(y, x),
+    }
+  }
+
   const { alpha, beta } = state
   const x = 2 * (alpha.real * beta.real + alpha.imag * beta.imag)
   const y = 2 * (alpha.real * beta.imag - alpha.imag * beta.real)
   const z = magnitudeSquared(alpha) - magnitudeSquared(beta)
+  const length = Math.sqrt(x * x + y * y + z * z)
 
   return {
     x,
     y,
     z,
+    length,
     theta: Math.acos(Math.max(-1, Math.min(1, z))),
     phi: Math.atan2(y, x),
   }

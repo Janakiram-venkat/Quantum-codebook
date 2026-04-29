@@ -1,0 +1,176 @@
+{
+  "id": "qaoa",
+  "title": "Quantum Approximate Optimization Algorithm (QAOA)",
+  "level": "advance",
+  "theory": {
+    "introduction": "QAOA is a hybrid quantum-classical algorithm for combinatorial optimization. It alternates between a cost layer that rewards good answers and a mixer layer that keeps the state exploring the search space.",
+    "why_it_matters": "QAOA is one of the most important near-term optimization algorithms because it connects graph problems, variational circuits, and classical parameter tuning in one compact loop.",
+    "core_idea": "Prepare a broad starting state, apply a problem-dependent cost Hamiltonian with angle gamma, apply a mixer Hamiltonian with angle beta, then let a classical optimizer tune those angles to increase the expected objective value.",
+    "key_points": [
+      "QAOA is hybrid: the quantum circuit evaluates a parameterized state while a classical optimizer updates the parameters.",
+      "The cost Hamiltonian encodes what makes an answer good.",
+      "The mixer Hamiltonian keeps amplitude moving between candidate answers.",
+      "A single layer is called p = 1. Larger p means more expressivity and usually more optimization difficulty.",
+      "For Max-Cut, good solutions place neighboring nodes in opposite partitions."
+    ],
+    "mathematical_representation": {
+      "cost_hamiltonian": "C encodes the optimization objective.",
+      "mixer_hamiltonian": "B drives transitions between bitstrings.",
+      "qaoa_state": "|psi(beta, gamma)> = exp(-i beta B) exp(-i gamma C) |+...+>",
+      "expectation_value": "<psi(beta, gamma)| C |psi(beta, gamma)>"
+    },
+    "sections": [
+      {
+        "title": "Optimization Lens",
+        "content": [
+          "Every bitstring is a candidate solution.",
+          "The cost layer rewards good solutions with phase.",
+          "The mixer layer prevents the circuit from getting stuck on one answer too early.",
+          "The classical optimizer chooses the angles that make good answers more likely."
+        ]
+      },
+      {
+        "title": "Max-Cut Intuition",
+        "content": [
+          "Each qubit labels which side of the cut a node belongs to.",
+          "An edge is satisfied when its endpoints land in different partitions.",
+          "Bitstrings like 01 and 10 cut a single edge, while 00 and 11 do not."
+        ],
+        "intuition": "QAOA does not search every answer separately. It reshapes one quantum state so good cuts collect more probability."
+      },
+      {
+        "title": "Tradeoffs",
+        "content": [
+          "Larger p can improve the best achievable answer.",
+          "More layers also mean more parameters and a harder optimization landscape.",
+          "Hardware noise and barren plateaus can make tuning difficult."
+        ]
+      }
+    ]
+  },
+  "algorithm_structure": {
+    "steps": [
+      {
+        "step": 1,
+        "description": "Translate the optimization problem into a cost Hamiltonian."
+      },
+      {
+        "step": 2,
+        "description": "Prepare the equal superposition state using Hadamards."
+      },
+      {
+        "step": 3,
+        "description": "Apply the cost layer exp(-i gamma C)."
+      },
+      {
+        "step": 4,
+        "description": "Apply the mixer layer exp(-i beta B)."
+      },
+      {
+        "step": 5,
+        "description": "Measure the circuit and estimate the objective value."
+      },
+      {
+        "step": 6,
+        "description": "Use a classical optimizer to choose better beta and gamma values."
+      },
+      {
+        "step": 7,
+        "description": "Repeat until the parameters converge."
+      }
+    ]
+  },
+  "circuit_examples": [
+    {
+      "name": "Single-Layer QAOA",
+      "description": "A p = 1 circuit starts in superposition, applies one cost layer, then one mixer layer."
+    },
+    {
+      "name": "Two-Node Max-Cut",
+      "description": "For a graph with one edge, the desired answers are 01 and 10 because they place the nodes on opposite sides of the cut."
+    }
+  ],
+  "applications": [
+    "Max-Cut and related graph partitioning problems",
+    "Scheduling and resource allocation",
+    "Portfolio selection",
+    "Routing and logistics"
+  ],
+  "advantages": [
+    "Fits naturally on near-term quantum hardware",
+    "Easy to connect to classical optimizers",
+    "Problem structure enters directly through the cost Hamiltonian"
+  ],
+  "limitations": [
+    "Parameter optimization can be difficult",
+    "Deeper circuits face more hardware noise",
+    "Good performance often depends on problem-specific heuristics"
+  ],
+  "summary": "QAOA steers probability toward good answers by alternating cost and mixer layers. The quantum circuit proposes a distribution over bitstrings, and the classical optimizer keeps retuning the proposal.",
+  "difficulty": "hard",
+  "estimated_time": "45-55 minutes",
+  "prerequisites": [
+    "Hamiltonians",
+    "Multi-Qubit Systems",
+    "Controlled Gates",
+    "Optimization Intuition"
+  ],
+  "simulation": {
+    "type": "qaoa_optimizer",
+    "section_title": "Max-Cut parameter lab",
+    "section_subtitle": "Tune beta and gamma on a tiny graph and watch probability flow toward the cut states.",
+    "default_beta": 0.35,
+    "default_gamma": 0.8,
+    "try_this": [
+      "Try small beta and gamma values first so you can see the distribution move gradually.",
+      "Compare the cut states 01 and 10 against the uncut states 00 and 11.",
+      "Look for parameter settings where the graph preview prefers opposite node colors."
+    ]
+  },
+  "quiz": [
+    {
+      "question": "QAOA is mainly designed for which class of tasks?",
+      "options": [
+        "Sorting",
+        "Optimization",
+        "Error correction",
+        "Factoring"
+      ],
+      "answer": "Optimization",
+      "explanation": "QAOA targets combinatorial optimization problems such as Max-Cut, routing, and scheduling."
+    },
+    {
+      "question": "What does the cost Hamiltonian represent?",
+      "options": [
+        "A random mixer used only for exploration",
+        "The objective function that scores candidate answers",
+        "The measurement apparatus",
+        "The number of qubits in the circuit"
+      ],
+      "answer": "The objective function that scores candidate answers",
+      "explanation": "The cost Hamiltonian is the problem-dependent part of QAOA. It rewards good bitstrings through phase."
+    },
+    {
+      "question": "What is the role of the mixer layer?",
+      "options": [
+        "It measures the qubits",
+        "It keeps amplitude moving through the search space",
+        "It removes all entanglement",
+        "It resets the circuit after each layer"
+      ],
+      "answer": "It keeps amplitude moving through the search space",
+      "explanation": "Without the mixer, the circuit would have no mechanism to explore alternative candidate bitstrings."
+    },
+    {
+      "question": "Why are 01 and 10 the best answers for a graph with one edge?",
+      "options": [
+        "They put both nodes on the same side of the cut",
+        "They cut the edge by placing the nodes in opposite partitions",
+        "They require fewer qubits",
+        "They eliminate the mixer layer"
+      ],
+      "answer": "They cut the edge by placing the nodes in opposite partitions",
+      "explanation": "In Max-Cut, an edge contributes when its endpoints land on different sides. For a single edge, that means 01 and 10."
+    }
+  ]
+}

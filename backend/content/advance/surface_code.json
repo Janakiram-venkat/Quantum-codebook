@@ -1,0 +1,213 @@
+{
+    "id": "surface_codes",
+    "title": "Surface Codes",
+    "level": "advance",
+    "theory": {
+        "introduction": "Surface Codes are one of the most practical quantum error correction methods used to protect quantum information from noise and decoherence. They encode logical qubits using many physical qubits arranged in a 2D lattice. Surface codes are considered one of the most promising approaches for building scalable fault-tolerant quantum computers.",
+        "key_points": [
+            "Quantum systems are highly sensitive to noise",
+            "Error correction is required for reliable quantum computation",
+            "Surface codes encode logical qubits using many physical qubits",
+            "Errors detected using stabilizer measurements",
+            "Fault tolerance achieved using redundant encoding",
+            "Widely used in superconducting quantum hardware"
+        ],
+        "intuition": {
+            "description": "Individual qubits easily lose information due to environmental noise. Surface codes protect information by spreading it across multiple qubits, allowing errors to be detected and corrected without directly measuring the quantum state.",
+            "core_idea": "Protect quantum information using redundancy and stabilizer measurements."
+        },
+        "mathematical_representation": {
+            "logical_encoding": "|ψ_L⟩ encoded across multiple qubits",
+            "stabilizer_condition": "S|ψ_L⟩ = |ψ_L⟩",
+            "error_detection": "Measure stabilizers to detect bit-flip and phase-flip errors",
+            "distance_relation": "Error tolerance depends on code distance"
+        },
+        "sections": [
+            {
+                "title": "Why Error Correction is Needed",
+                "content": [
+                    "Qubits interact with environment",
+                    "Noise causes decoherence",
+                    "Errors accumulate during computation",
+                    "Reliable quantum computing requires correction methods"
+                ]
+            },
+            {
+                "title": "Logical vs Physical Qubits",
+                "content": [
+                    "Physical qubits are hardware-level qubits",
+                    "Logical qubits represent encoded information",
+                    "Multiple physical qubits represent one logical qubit",
+                    "Redundancy improves reliability"
+                ]
+            },
+            {
+                "title": "2D Lattice Structure",
+                "content": [
+                    "Qubits arranged in grid structure",
+                    "Each qubit interacts with neighbors",
+                    "Plaquettes define stabilizer measurements",
+                    "Local interactions simplify hardware implementation"
+                ]
+            },
+            {
+                "title": "Stabilizer Measurements",
+                "content": [
+                    "Measure parity of qubit groups",
+                    "Detect bit-flip errors",
+                    "Detect phase-flip errors",
+                    "Errors identified without collapsing logical state"
+                ]
+            },
+            {
+                "title": "Fault Tolerance",
+                "content": [
+                    "Errors corrected continuously",
+                    "Larger lattice increases reliability",
+                    "Code distance determines error tolerance",
+                    "Essential for large quantum computers"
+                ]
+            }
+        ]
+    },
+    "algorithm_structure": {
+        "goal": "Protect logical qubit from noise",
+        "steps": [
+            {
+                "step": 1,
+                "description": "Encode logical qubit into lattice of physical qubits"
+            },
+            {
+                "step": 2,
+                "description": "Measure stabilizers to detect errors"
+            },
+            {
+                "step": 3,
+                "description": "Identify error type (bit-flip or phase-flip)"
+            },
+            {
+                "step": 4,
+                "description": "Apply correction operation"
+            },
+            {
+                "step": 5,
+                "description": "Repeat measurements continuously"
+            }
+        ]
+    },
+    "circuit_examples": [
+        {
+            "name": "Stabilizer Measurement Circuit",
+            "description": "Measure parity of neighboring qubits",
+            "circuit_pattern": [
+                "Apply CNOT gates between data qubits and ancilla qubit",
+                "Measure ancilla qubit",
+                "Determine error syndrome"
+            ]
+        },
+        {
+            "name": "Bit Flip Error Detection",
+            "description": "Detect X errors using stabilizer operators"
+        }
+    ],
+    "applications": [
+        "Fault-tolerant quantum computing",
+        "Large scale quantum processors",
+        "Quantum memory protection",
+        "Reliable quantum communication"
+    ],
+    "real_world_examples": [
+        "Superconducting qubit architectures",
+        "Google quantum error correction experiments",
+        "IBM fault tolerant quantum systems",
+        "Topological quantum computing research"
+    ],
+    "summary": "Surface codes enable reliable quantum computation by encoding logical qubits across multiple physical qubits and detecting errors using stabilizer measurements.",
+    "difficulty": "hard",
+    "estimated_time": "45-60 minutes",
+    "prerequisites": [
+        "Quantum Gates",
+        "Multi-Qubit Systems",
+        "Entanglement",
+        "Quantum Measurement",
+        "Quantum Noise Concepts"
+    ],
+    "simulation": {
+        "initial_state": "Logical |0⟩ encoded in lattice",
+        "operations": [
+            {
+                "gate": "CNOT",
+                "control": 0,
+                "target": 4
+            },
+            {
+                "gate": "CNOT",
+                "control": 1,
+                "target": 4
+            },
+            {
+                "gate": "CNOT",
+                "control": 2,
+                "target": 4
+            },
+            {
+                "gate": "CNOT",
+                "control": 3,
+                "target": 4
+            },
+            {
+                "gate": "MEASURE",
+                "target": 4
+            }
+        ],
+        "expected_result": "Measurement reveals error syndrome",
+        "try_this": [
+            "Introduce bit-flip error",
+            "Introduce phase-flip error",
+            "Observe stabilizer measurements",
+            "Increase lattice size"
+        ]
+    },
+    "quiz": [
+        {
+            "question": "Why are surface codes needed?",
+            "options": [
+                "To speed up circuits",
+                "To correct quantum errors",
+                "To reduce qubit count",
+                "To simulate molecules"
+            ],
+            "answer": "To correct quantum errors"
+        },
+        {
+            "question": "Logical qubits are encoded using?",
+            "options": [
+                "Single physical qubit",
+                "Multiple physical qubits",
+                "Classical bits",
+                "Measurement gates"
+            ],
+            "answer": "Multiple physical qubits"
+        },
+        {
+            "question": "What do stabilizer measurements detect?",
+            "options": [
+                "Circuit depth",
+                "Noise and errors",
+                "Optimization parameters",
+                "Fourier coefficients"
+            ],
+            "answer": "Noise and errors"
+        },
+        {
+            "question": "Increasing code distance results in?",
+            "options": [
+                "More errors",
+                "Better error protection",
+                "Faster measurement",
+                "Lower entanglement"
+            ],
+            "answer": "Better error protection"
+        }
+    ]
+}
