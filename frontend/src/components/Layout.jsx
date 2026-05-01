@@ -7,7 +7,11 @@ import { brandLogo } from '../lib/branding.js'
 const THEME_STORAGE_KEY = 'quantum-codebook-theme'
 
 function getInitialTheme() {
-  return 'light'
+  try {
+    const stored = window.localStorage.getItem(THEME_STORAGE_KEY)
+    if (stored === 'light' || stored === 'dark') return stored
+  } catch {}
+  return 'dark'
 }
 
 export default function Layout() {
@@ -19,44 +23,31 @@ export default function Layout() {
       document.documentElement.requestFullscreen().catch(() => {})
       return
     }
-
     document.exitFullscreen().catch(() => {})
   }
 
   useEffect(() => {
-    const onFullscreenChange = () => {
-      setIsFullscreen(Boolean(document.fullscreenElement))
-    }
-
+    const onFullscreenChange = () => setIsFullscreen(Boolean(document.fullscreenElement))
     document.addEventListener('fullscreenchange', onFullscreenChange)
-
-    return () => {
-      document.removeEventListener('fullscreenchange', onFullscreenChange)
-    }
+    return () => document.removeEventListener('fullscreenchange', onFullscreenChange)
   }, [])
 
   useEffect(() => {
     document.documentElement.dataset.theme = theme
     document.documentElement.style.colorScheme = theme
     window.localStorage.setItem(THEME_STORAGE_KEY, theme)
-
     const themeColorMeta = document.querySelector("meta[name='theme-color']")
     if (themeColorMeta) {
-      themeColorMeta.setAttribute('content', theme === 'dark' ? '#07111d' : '#ffffff')
+      themeColorMeta.setAttribute('content', theme === 'dark' ? '#050c1a' : '#f0f4ff')
     }
   }, [theme])
 
   useEffect(() => {
-    const favicon =
-      document.querySelector("link[rel='icon']") || document.createElement('link')
-
+    const favicon = document.querySelector("link[rel='icon']") || document.createElement('link')
     favicon.setAttribute('rel', 'icon')
     favicon.setAttribute('type', 'image/png')
     favicon.setAttribute('href', brandLogo)
-
-    if (!favicon.parentNode) {
-      document.head.appendChild(favicon)
-    }
+    if (!favicon.parentNode) document.head.appendChild(favicon)
   }, [])
 
   return (
@@ -66,13 +57,11 @@ export default function Layout() {
           isFullscreen={isFullscreen}
           onToggleFullscreen={toggleFullscreen}
           theme={theme}
-          onToggleTheme={() => setTheme(currentTheme => (currentTheme === 'dark' ? 'light' : 'dark'))}
+          onToggleTheme={() => setTheme(t => t === 'dark' ? 'light' : 'dark')}
         />
-
         <aside className="app-shell-sidebar">
           <Sidebar />
         </aside>
-
         <section className="app-shell-content">
           <main className="app-shell-content-scroll">
             <Outlet />

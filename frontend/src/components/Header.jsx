@@ -27,16 +27,10 @@ const advanceLessons = [
   { id: 'surface_code', label: 'Surface Codes' },
 ]
 
-const allLessons = {
-  beginner: beginnerLessons,
-  intermediate: intermediateLessons,
-  advance: advanceLessons,
-}
-
 const lessonTitles = Object.fromEntries([
-  ...beginnerLessons.map(lesson => [lesson.id, lesson.label]),
-  ...intermediateLessons.map(lesson => [lesson.id, lesson.label]),
-  ...advanceLessons.map(lesson => [lesson.id, lesson.label]),
+  ...beginnerLessons.map(l => [l.id, l.label]),
+  ...intermediateLessons.map(l => [l.id, l.label]),
+  ...advanceLessons.map(l => [l.id, l.label]),
 ])
 
 function resolveHeaderState(pathname) {
@@ -45,36 +39,26 @@ function resolveHeaderState(pathname) {
   const routeId = pathParts[1]
 
   if (pathname === '/') {
-    return {
-      eyebrow: 'Home',
-      title: PRODUCT_NAME,
-      nextLabel: 'Beginner Track',
-      nextPath: '/track/beginner',
-    }
+    return { eyebrow: 'Home', title: PRODUCT_NAME, nextLabel: 'Beginner Track', nextPath: '/track/beginner' }
   }
 
   if (routeGroup === 'track') {
-    const trackLabel = routeId === 'beginner' ? 'Beginner Track' : routeId === 'intermediate' ? 'Intermediate Track' : routeId === 'advance' ? 'Advance Track' : 'Learning Track'
-    const firstLessonId = routeId === 'beginner' ? 'qubits_states' : routeId === 'intermediate' ? 'multi_qubit_system' : routeId === 'advance' ? 'shors_algorithm' : 'qubits_states'
-    
-    return {
-      eyebrow: 'Track',
-      title: trackLabel,
-      nextLabel: 'Start Learning',
-      nextPath: `/lesson/${firstLessonId}`,
-    }
+    const trackLabel = routeId === 'beginner' ? 'Beginner Track'
+      : routeId === 'intermediate' ? 'Intermediate Track'
+      : routeId === 'advance' ? 'Advance Track' : 'Learning Track'
+    const firstLessonId = routeId === 'beginner' ? 'qubits_states'
+      : routeId === 'intermediate' ? 'multi_qubit_system'
+      : routeId === 'advance' ? 'shors_algorithm' : 'qubits_states'
+    return { eyebrow: 'Track', title: trackLabel, nextLabel: 'Start Learning', nextPath: `/lesson/${firstLessonId}` }
   }
 
   if (routeGroup === 'lesson') {
-    // Determine which track the lesson belongs to
-    const isAdvanceLesson = advanceLessons.some(l => l.id === routeId)
-    const isIntermediateLesson = intermediateLessons.some(l => l.id === routeId)
-    const lessonArray = isAdvanceLesson ? advanceLessons : isIntermediateLesson ? intermediateLessons : beginnerLessons
-    const trackPath = isAdvanceLesson ? 'advance' : isIntermediateLesson ? 'intermediate' : 'beginner'
-    
-    const currentIndex = lessonArray.findIndex(lesson => lesson.id === routeId)
+    const isAdvance = advanceLessons.some(l => l.id === routeId)
+    const isIntermediate = intermediateLessons.some(l => l.id === routeId)
+    const lessonArray = isAdvance ? advanceLessons : isIntermediate ? intermediateLessons : beginnerLessons
+    const trackPath = isAdvance ? 'advance' : isIntermediate ? 'intermediate' : 'beginner'
+    const currentIndex = lessonArray.findIndex(l => l.id === routeId)
     const nextLesson = lessonArray[currentIndex + 1]
-
     return {
       eyebrow: 'Now Reading',
       title: lessonTitles[routeId] ?? 'Lesson',
@@ -83,12 +67,7 @@ function resolveHeaderState(pathname) {
     }
   }
 
-  return {
-    eyebrow: 'Workspace',
-    title: PRODUCT_NAME,
-    nextLabel: 'Home',
-    nextPath: '/',
-  }
+  return { eyebrow: 'Workspace', title: PRODUCT_NAME, nextLabel: 'Home', nextPath: '/' }
 }
 
 export default function Header({ isFullscreen, onToggleFullscreen, theme, onToggleTheme }) {
@@ -98,15 +77,12 @@ export default function Header({ isFullscreen, onToggleFullscreen, theme, onTogg
 
   return (
     <header className="app-topbar">
-      <button 
-        className="app-topbar-brand" 
+      <button
+        className="app-topbar-brand"
         onClick={() => navigate('/')}
-        style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '2px', padding: '0 8px' }}
       >
         <img src={brandLogo} alt={BRAND_NAME} className="app-topbar-brand-image" />
-        <span className="app-topbar-brand-subtitle" style={{ fontSize: '15px', fontWeight: 600, color: 'var(--text-secondary)', letterSpacing: '0.02em' }}>
-          {PRODUCT_NAME}
-        </span>
+        <span className="app-topbar-brand-subtitle">{PRODUCT_NAME}</span>
       </button>
 
       <div className="app-topbar-title">
@@ -119,12 +95,12 @@ export default function Header({ isFullscreen, onToggleFullscreen, theme, onTogg
           <span className="app-topbar-cell-label">Next</span>
           <span className="app-topbar-cell-value">
             {state.nextLabel}
-            <ArrowRight size={14} />
+            <ArrowRight size={13} />
           </span>
         </button>
       </div>
 
-      <div className="app-topbar-cell app-topbar-cell--compact">
+      <div className="app-topbar-cell">
         <button
           className="app-topbar-cell-button"
           onClick={onToggleTheme}
@@ -133,17 +109,17 @@ export default function Header({ isFullscreen, onToggleFullscreen, theme, onTogg
           <span className="app-topbar-cell-label">Theme</span>
           <span className="app-topbar-cell-value">
             {theme === 'dark' ? 'Dark mode' : 'Light mode'}
-            {theme === 'dark' ? <MoonStar size={14} /> : <SunMedium size={14} />}
+            {theme === 'dark' ? <MoonStar size={13} /> : <SunMedium size={13} />}
           </span>
         </button>
       </div>
 
-      <div className="app-topbar-cell app-topbar-cell--compact">
+      <div className="app-topbar-cell">
         <button className="app-topbar-cell-button" onClick={onToggleFullscreen}>
           <span className="app-topbar-cell-label">View</span>
           <span className="app-topbar-cell-value">
             {isFullscreen ? 'Exit Full Screen' : 'Full Screen'}
-            {isFullscreen ? <Minimize2 size={14} /> : <Maximize2 size={14} />}
+            {isFullscreen ? <Minimize2 size={13} /> : <Maximize2 size={13} />}
           </span>
         </button>
       </div>
