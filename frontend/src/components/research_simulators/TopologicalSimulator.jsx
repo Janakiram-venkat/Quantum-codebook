@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { GitCommit, History } from 'lucide-react'
 
-export default function TopologicalSimulator({ topic, simulation, theory }) {
+export default function TopologicalSimulator({ simulation }) {
   const [braidPath, setBraidPath] = useState([])
   const [isBraiding, setIsBraiding] = useState(false)
 

@@ -1,5 +1,3 @@
-import React from 'react';
-
 export default function VisualizationPanel({ history, isOptimizing }) {
   if (history.length === 0) {
     return (

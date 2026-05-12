@@ -1,10 +1,11 @@
 import { createElement, useEffect, useState } from 'react'
-import { useParams } from 'react-router-dom'
+import { useParams, useLocation, useNavigate } from 'react-router-dom'
 import axios from 'axios'
-import { Loader2, AlertCircle, BookOpen, Cpu, HelpCircle, Atom } from 'lucide-react'
+import { Loader2, AlertCircle, BookOpen, Cpu, HelpCircle, Atom, ArrowRight } from 'lucide-react'
 import TheorySection from '../components/TheorySection'
 import SimulationSection from '../components/SimulationSection'
 import QuizSection from '../components/QuizSection'
+import { resolveHeaderState } from '../components/Header'
 
 function SectionIntro({ icon, label, title, subtitle, accentColor }) {
   const color = accentColor || 'var(--accent)'
@@ -50,9 +51,13 @@ function SectionIntro({ icon, label, title, subtitle, accentColor }) {
 
 export default function Lesson() {
   const { id } = useParams()
+  const location = useLocation()
+  const navigate = useNavigate()
   const [data, setData] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
+
+  const headerState = resolveHeaderState(location.pathname)
 
   useEffect(() => {
     setLoading(true)
@@ -206,7 +211,7 @@ export default function Lesson() {
                 marginTop: 4,
               }}>
                 <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: 12 }}>
-                  {data.open_questions.map((question, idx) => (
+                  {data.open_questions.map((questionItem, idx) => (
                     <li key={idx} style={{
                       display: 'flex', gap: 12, alignItems: 'flex-start',
                       fontSize: 15, color: 'var(--text-secondary)', lineHeight: 1.7,
@@ -215,13 +220,53 @@ export default function Lesson() {
                         fontSize: 10, fontFamily: 'var(--font-mono)',
                         color: '#34d399', fontWeight: 600, marginTop: 5, flexShrink: 0,
                       }}>{String(idx + 1).padStart(2, '0')}</span>
-                      {question}
+                      <div>
+                        {typeof questionItem === 'string' ? questionItem : (
+                          <>
+                            <strong>{questionItem.question}</strong>
+                            {questionItem.importance && <div style={{ fontSize: 13, opacity: 0.8 }}>{questionItem.importance}</div>}
+                          </>
+                        )}
+                      </div>
                     </li>
                   ))}
                 </ul>
               </div>
             </section>
           )}
+
+          {/* Next Lesson Button */}
+          <div style={{
+            display: 'flex',
+            justifyContent: 'flex-end',
+            marginTop: 40,
+            paddingTop: 24,
+            borderTop: '1px solid var(--rule)'
+          }}>
+            <button 
+              onClick={() => navigate(headerState.nextPath)}
+              style={{
+                display: 'inline-flex', alignItems: 'center', gap: 12,
+                fontSize: 16, fontWeight: 700,
+                color: 'var(--bg-primary)',
+                background: 'var(--accent)',
+                border: 'none',
+                padding: '14px 28px',
+                borderRadius: 12,
+                cursor: 'pointer',
+                transition: 'transform 0.15s, box-shadow 0.15s',
+                letterSpacing: '0.01em',
+              }}
+              onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = 'var(--glow-cyan)' }}
+              onMouseLeave={e => { e.currentTarget.style.transform = 'none'; e.currentTarget.style.boxShadow = 'none' }}
+            >
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 0 }}>
+                <span style={{ fontSize: 10, textTransform: 'uppercase', letterSpacing: '0.15em', opacity: 0.9 }}>Next</span>
+                <span>{headerState.nextLabel}</span>
+              </div>
+              <ArrowRight size={20} />
+            </button>
+          </div>
 
           <div style={{ paddingBottom: 48 }} />
         </>

@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { FlaskConical } from 'lucide-react'
 
-export default function QuantumChemistrySimulator({ topic, simulation, theory }) {
+export default function QuantumChemistrySimulator({ simulation }) {
   const [distance, setDistance] = useState(0.74) // Default H2 bond length
   
   // Fake Morse potential calculation for H2

@@ -55,7 +55,7 @@ export default function SimulationSection({ topic, simulation, theory }) {
 
   const ResearchComponent = RESEARCH_SIMULATORS[topic]
   if (ResearchComponent) {
-    return <ResearchComponent topic={topic} simulation={simulation} theory={theory} />
+    return <ResearchComponent simulation={simulation} />
   }
 
   if (simulation.type === 'state_visualization') {
@@ -70,12 +70,12 @@ export default function SimulationSection({ topic, simulation, theory }) {
   const TopicComponent = topicLab.Component
 
   if (topicLab.includeStandard === false) {
-    return <TopicComponent topic={topic} simulation={simulation} theory={theory} />
+    return <TopicComponent />
   }
 
   return (
     <div className="space-y-6">
-      <TopicComponent topic={topic} simulation={simulation} theory={theory} />
+      <TopicComponent />
       <StandardCircuitSimulation key={`${topic}-standard`} simulation={simulation} theory={theory} />
     </div>
   )

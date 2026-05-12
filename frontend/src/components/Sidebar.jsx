@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { NavLink, useLocation } from 'react-router-dom'
-import { Atom, ChevronDown, ChevronRight, Home, Zap, Layers, FlaskConical, Telescope } from 'lucide-react'
+import { Atom, ChevronDown, ChevronRight, Home, Layers, Telescope, Zap } from 'lucide-react'
 
 const beginnerTopics = [
   { id: 'qubits_states', label: 'Qubits and States' },
@@ -133,7 +133,6 @@ export default function Sidebar() {
   return (
     <div className="app-sidebar-shell">
       <div className="app-sidebar-scroll">
-        {/* Home link */}
         <section className="app-sidebar-section">
           <p className="app-sidebar-section-label">Navigation</p>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
@@ -143,12 +142,11 @@ export default function Sidebar() {
               className={({ isActive }) => `app-sidebar-link${isActive ? ' is-active' : ''}`}
             >
               <Home size={14} style={{ flexShrink: 0 }} />
-              <span>Welcome</span>
+              <span>Choose Track</span>
             </NavLink>
           </div>
         </section>
 
-        {/* Divider */}
         <div style={{ height: 1, background: 'var(--rule)', margin: '4px 0 8px' }} />
 
         <p className="app-sidebar-section-label">Learning Tracks</p>

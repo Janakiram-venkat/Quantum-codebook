@@ -1,7 +1,7 @@
 import { useState, useCallback } from 'react'
 import { ShieldCheck, BugPlay } from 'lucide-react'
 
-export default function FaultTolerantSimulator({ topic, simulation, theory }) {
+export default function FaultTolerantSimulator({ simulation }) {
   const [noiseLevel, setNoiseLevel] = useState(10)
   const [grid, setGrid] = useState(Array(9).fill({ error: false, corrected: false }))
 

@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { BrainCircuit, Play } from 'lucide-react'
 
-export default function QMLSimulator({ topic, simulation, theory }) {
+export default function QMLSimulator({ simulation }) {
   const [running, setRunning] = useState(false)
   const [epoch, setEpoch] = useState(0)
   const [loss, setLoss] = useState(1.0)

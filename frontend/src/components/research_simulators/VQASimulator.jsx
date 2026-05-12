@@ -6,7 +6,7 @@ import { optimizerStep } from './vqa/optimizer'
 import VisualizationPanel from './vqa/VisualizationPanel'
 import CircuitRenderer from '../CircuitRenderer'
 
-export default function VQASimulator({ topic, simulation, theory }) {
+export default function VQASimulator() {
   // A. Circuit Controls
   const [numQubits, setNumQubits] = useState(2)
   const [depth, setDepth] = useState(2)
@@ -226,4 +226,3 @@ export default function VQASimulator({ topic, simulation, theory }) {
     </div>
   )
 }
-

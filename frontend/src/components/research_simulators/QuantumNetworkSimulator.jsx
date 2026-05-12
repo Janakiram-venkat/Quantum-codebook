@@ -1,7 +1,7 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { Network, Send, Zap } from 'lucide-react'
 
-export default function QuantumNetworkSimulator({ topic, simulation, theory }) {
+export default function QuantumNetworkSimulator({ simulation }) {
   const [entangled, setEntangled] = useState(false)
   const [teleporting, setTeleporting] = useState(false)
   const [stateTransmitted, setStateTransmitted] = useState(false)

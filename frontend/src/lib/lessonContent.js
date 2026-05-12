@@ -376,6 +376,39 @@ function renderBasicCodes(codes) {
   }).filter(Boolean).join('\n\n')
 }
 
+function renderGenericSection(data, level = 3) {
+  if (!data) return ''
+  if (typeof data === 'string') return renderParagraph(data)
+  if (Array.isArray(data)) {
+    // If it's an array of strings, render a list
+    if (data.every(item => typeof item === 'string')) return renderList(data)
+    // If it's an array of objects (like common_misconceptions)
+    return data.map(item => {
+      if (typeof item === 'string') return `- ${escapeMdxText(item)}`
+      if (typeof item === 'object') {
+        const titleKey = ['title', 'myth', 'question', 'topic'].find(k => item[k])
+        const descKey = ['description', 'reality', 'discussion', 'importance', 'effect'].find(k => item[k])
+        if (titleKey && descKey) {
+          return `**${escapeMdxText(item[titleKey])}:** ${escapeMdxText(item[descKey])}`
+        }
+        return Object.entries(item).map(([k, v]) => `**${formatLabel(k)}:** ${escapeMdxText(String(v))}`).join('\n')
+      }
+      return ''
+    }).join('\n\n')
+  }
+  if (typeof data === 'object') {
+    return Object.entries(data).map(([key, value]) => {
+      if (!value) return ''
+      if (key === 'overview' || key === 'description' || key === 'core_idea') {
+        return typeof value === 'string' ? renderParagraph(value) : ''
+      }
+      const heading = '#'.repeat(Math.min(level, 6)) + ' ' + formatLabel(key)
+      return joinSource([heading, renderGenericSection(value, level + 1)])
+    }).filter(Boolean).join('\n\n')
+  }
+  return String(data)
+}
+
 function joinSource(blocks) {
   return blocks
     .filter(Boolean)
@@ -571,8 +604,8 @@ export function buildLessonTheorySource(lesson) {
     }
   }
 
-  if (lesson?.applications?.length > 0) {
-    blocks.push(joinSource(['## Applications', renderList(lesson.applications)]))
+  if (lesson?.applications) {
+    blocks.push(joinSource(['## Applications', renderGenericSection(lesson.applications)]))
   }
 
   if (lesson?.advantages?.length > 0) {
@@ -590,6 +623,41 @@ export function buildLessonTheorySource(lesson) {
   if (lesson?.summary && typeof lesson.summary === 'string') {
     blocks.push(renderCallout('Lesson Summary', renderParagraph(lesson.summary), 'note'))
   }
+
+  // --- RESEARCH-SPECIFIC FIELDS ---
+  const researchFields = [
+    'data_encoding',
+    'quantum_feature_spaces',
+    'quantum_models',
+    'mathematical_foundation',
+    'training_process',
+    'optimization_methods',
+    'hardware_constraints',
+    'quantum_advantage_debate',
+    'industry_relevance',
+    'research_directions',
+    'common_misconceptions'
+  ]
+
+  // Some theory sub-fields
+  const theoryFields = [
+    'historical_context',
+    'motivation',
+    'classical_vs_quantum_ml',
+    'core_quantum_principles'
+  ]
+
+  theoryFields.forEach(field => {
+    if (theory && theory[field]) {
+      blocks.push(joinSource([`## ${formatLabel(field)}`, renderGenericSection(theory[field])]))
+    }
+  })
+
+  researchFields.forEach(field => {
+    if (lesson && lesson[field]) {
+      blocks.push(joinSource([`## ${formatLabel(field)}`, renderGenericSection(lesson[field])]))
+    }
+  })
 
   if (lesson?.simulation?.try_this) {
     blocks.push(

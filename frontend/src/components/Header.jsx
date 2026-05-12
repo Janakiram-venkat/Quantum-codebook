@@ -1,5 +1,5 @@
 import { useLocation, useNavigate } from 'react-router-dom'
-import { ArrowRight, Maximize2, Minimize2, MoonStar, SunMedium } from 'lucide-react'
+import { ArrowRight, Maximize2, Minimize2, MoonStar, PanelLeftClose, PanelLeftOpen, SunMedium } from 'lucide-react'
 import { BRAND_NAME, PRODUCT_NAME, brandLogo } from '../lib/branding.js'
 
 const beginnerLessons = [
@@ -27,100 +27,113 @@ const advanceLessons = [
   { id: 'surface_code', label: 'Surface Codes' },
 ]
 
+const researchLessons = [
+  { id: 'variational_quantum_algorithms', label: 'Variational Quantum Algorithms' },
+  { id: 'quantum_machine_learning', label: 'Quantum Machine Learning' },
+  { id: 'topological_quantum_computing', label: 'Topological Quantum Computing' },
+  { id: 'quantum_chemistry', label: 'Quantum Chemistry' },
+  { id: 'fault_tolerant_quantum_computing', label: 'Fault Tolerant Quantum Computing' },
+  { id: 'quantum_networking', label: 'Quantum Networking' },
+]
+
 const lessonTitles = Object.fromEntries([
   ...beginnerLessons.map(l => [l.id, l.label]),
   ...intermediateLessons.map(l => [l.id, l.label]),
   ...advanceLessons.map(l => [l.id, l.label]),
+  ...researchLessons.map(l => [l.id, l.label]),
 ])
 
-function resolveHeaderState(pathname) {
+export function resolveHeaderState(pathname) {
   const pathParts = pathname.split('/').filter(Boolean)
   const routeGroup = pathParts[0]
   const routeId = pathParts[1]
 
   if (pathname === '/') {
-    return { eyebrow: 'Home', title: PRODUCT_NAME, nextLabel: 'Beginner Track', nextPath: '/track/beginner' }
-  }
-
-  if (routeGroup === 'track') {
-    const trackLabel = routeId === 'beginner' ? 'Beginner Track'
-      : routeId === 'intermediate' ? 'Intermediate Track'
-      : routeId === 'advance' ? 'Advance Track' : 'Learning Track'
-    const firstLessonId = routeId === 'beginner' ? 'qubits_states'
-      : routeId === 'intermediate' ? 'multi_qubit_system'
-      : routeId === 'advance' ? 'shors_algorithm' : 'qubits_states'
-    return { eyebrow: 'Track', title: trackLabel, nextLabel: 'Start Learning', nextPath: `/lesson/${firstLessonId}` }
+    return { eyebrow: 'Home', title: PRODUCT_NAME, nextLabel: 'Start Learning', nextPath: '/lesson/qubits_states' }
   }
 
   if (routeGroup === 'lesson') {
+    const isResearch = researchLessons.some(l => l.id === routeId)
     const isAdvance = advanceLessons.some(l => l.id === routeId)
     const isIntermediate = intermediateLessons.some(l => l.id === routeId)
-    const lessonArray = isAdvance ? advanceLessons : isIntermediate ? intermediateLessons : beginnerLessons
-    const trackPath = isAdvance ? 'advance' : isIntermediate ? 'intermediate' : 'beginner'
+    const lessonArray = isResearch
+      ? researchLessons
+      : isAdvance
+        ? advanceLessons
+        : isIntermediate
+          ? intermediateLessons
+          : beginnerLessons
     const currentIndex = lessonArray.findIndex(l => l.id === routeId)
     const nextLesson = lessonArray[currentIndex + 1]
     return {
       eyebrow: 'Now Reading',
       title: lessonTitles[routeId] ?? 'Lesson',
-      nextLabel: nextLesson ? nextLesson.label : 'Back to Track',
-      nextPath: nextLesson ? `/lesson/${nextLesson.id}` : `/track/${trackPath}`,
+      nextLabel: nextLesson ? nextLesson.label : 'Choose Track',
+      nextPath: nextLesson ? `/lesson/${nextLesson.id}` : '/',
     }
   }
 
   return { eyebrow: 'Workspace', title: PRODUCT_NAME, nextLabel: 'Home', nextPath: '/' }
 }
 
-export default function Header({ isFullscreen, onToggleFullscreen, theme, onToggleTheme }) {
+export default function Header({
+  isFullscreen,
+  onToggleFullscreen,
+  theme,
+  onToggleTheme,
+  isSidebarOpen,
+  onToggleSidebar,
+}) {
   const location = useLocation()
   const navigate = useNavigate()
   const state = resolveHeaderState(location.pathname)
 
   return (
-    <header className="app-topbar">
-      <button
-        className="app-topbar-brand"
-        onClick={() => navigate('/')}
-      >
-        <img src={brandLogo} alt={BRAND_NAME} className="app-topbar-brand-image" />
-        <span className="app-topbar-brand-subtitle">{PRODUCT_NAME}</span>
-      </button>
-
-      <div className="app-topbar-title">
-        <p className="app-topbar-eyebrow">{state.eyebrow}</p>
-        <h1 className="app-topbar-heading">{state.title}</h1>
-      </div>
-
-      <div className="app-topbar-cell">
-        <button className="app-topbar-cell-button" onClick={() => navigate(state.nextPath)}>
-          <span className="app-topbar-cell-label">Next</span>
-          <span className="app-topbar-cell-value">
-            {state.nextLabel}
-            <ArrowRight size={13} />
-          </span>
-        </button>
-      </div>
-
-      <div className="app-topbar-cell">
+    <header className={`app-topbar${isSidebarOpen ? '' : ' is-sidebar-collapsed'}`}>
+      <div style={{ display: 'flex', alignItems: 'center', height: '100%' }}>
         <button
-          className="app-topbar-cell-button"
+          className="app-topbar-brand"
+          onClick={() => navigate('/')}
+        >
+          <img src={brandLogo} alt={BRAND_NAME} className="app-topbar-brand-image" />
+          <span className="app-topbar-brand-subtitle">{PRODUCT_NAME}</span>
+        </button>
+
+        <button
+          className="app-topbar-nav-toggle"
+          onClick={onToggleSidebar}
+          aria-label={isSidebarOpen ? 'Hide navigation sidebar' : 'Show navigation sidebar'}
+        >
+          {isSidebarOpen ? <PanelLeftClose size={18} /> : <PanelLeftOpen size={18} />}
+        </button>
+
+        <div className={`app-topbar-title${state.title || state.eyebrow ? '' : ' is-empty'}`}>
+          {state.title || state.eyebrow ? (
+            <div className="app-topbar-title-copy">
+              {state.eyebrow ? <p className="app-topbar-eyebrow">{state.eyebrow}</p> : null}
+              {state.title ? <h1 className="app-topbar-heading">{state.title}</h1> : null}
+            </div>
+          ) : null}
+        </div>
+      </div>
+
+      <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+        <button
+          className="app-topbar-icon-button"
           onClick={onToggleTheme}
           aria-label={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
+          title={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
         >
-          <span className="app-topbar-cell-label">Theme</span>
-          <span className="app-topbar-cell-value">
-            {theme === 'dark' ? 'Dark mode' : 'Light mode'}
-            {theme === 'dark' ? <MoonStar size={13} /> : <SunMedium size={13} />}
-          </span>
+          {theme === 'dark' ? <MoonStar size={18} /> : <SunMedium size={18} />}
         </button>
-      </div>
 
-      <div className="app-topbar-cell">
-        <button className="app-topbar-cell-button" onClick={onToggleFullscreen}>
-          <span className="app-topbar-cell-label">View</span>
-          <span className="app-topbar-cell-value">
-            {isFullscreen ? 'Exit Full Screen' : 'Full Screen'}
-            {isFullscreen ? <Minimize2 size={13} /> : <Maximize2 size={13} />}
-          </span>
+        <button
+          className="app-topbar-icon-button"
+          onClick={onToggleFullscreen}
+          aria-label={isFullscreen ? 'Exit Full Screen' : 'Full Screen'}
+          title={isFullscreen ? 'Exit Full Screen' : 'Full Screen'}
+        >
+          {isFullscreen ? <Minimize2 size={18} /> : <Maximize2 size={18} />}
         </button>
       </div>
     </header>

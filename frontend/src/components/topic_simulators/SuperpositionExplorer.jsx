@@ -50,7 +50,7 @@ const GATE_COLORS = {
   X: { bg: 'rgba(239,68,68,0.15)',  border: 'rgba(239,68,68,0.6)',  text: 'rgb(252,165,165)' },
 }
 
-function AmplitudeBar({ label, amplitude, isTarget, color }) {
+function AmplitudeBar({ label, amplitude, isTarget }) {
   const prob = amplitude * amplitude
   const pct = Math.abs(prob * 100).toFixed(1)
   const ampAbs = Math.abs(amplitude)
@@ -119,7 +119,7 @@ function AmplitudeBar({ label, amplitude, isTarget, color }) {
   )
 }
 
-export default function SuperpositionExplorer({ simulation }) {
+export default function SuperpositionExplorer() {
   const [selectedId, setSelectedId] = useState('plus')
   const active = STATES.find(s => s.id === selectedId)
 

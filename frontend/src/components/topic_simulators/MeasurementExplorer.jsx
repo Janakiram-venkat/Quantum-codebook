@@ -59,7 +59,7 @@ function HistoryDot({ value }) {
   )
 }
 
-export default function MeasurementExplorer({ simulation }) {
+export default function MeasurementExplorer() {
   const [history, setHistory] = useState([])
   const [collapsed, setCollapsed] = useState(null)   // '0' | '1' | null
   const [animating, setAnimating] = useState(false)
